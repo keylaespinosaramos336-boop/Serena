@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Tipo de cuenta - Serena</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f4f7f9;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        /* MARCO DEL TELEFONO */
+        .phone-frame {
+            width: 380px;
+            height: 760px;
+            background: #1a1a1a;
+            border-radius: 50px;
+            padding: 15px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* PANTALLA CLARA */
+        .phone {
+            width: 340px;
+            height: 680px;
+            background: #ffffff;
+            border-radius: 40px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            color: #333;
+            padding: 25px;
+            box-sizing: border-box;
+        }
+
+        /* NOTCH */
+        .notch {
+            width: 120px;
+            height: 25px;
+            background: #1a1a1a;
+            border-radius: 0 0 20px 20px;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+
+        /* CONTENIDO */
+        .screen {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            z-index: 5;
+        }
+
+        /* LOGO */
+        .logo {
+            margin-top: 50px;
+            margin-bottom: 20px;
+        }
+
+        .logo img {
+            width: 110px;
+            height: auto;
+            filter: drop-shadow(0 8px 12px rgba(45, 78, 131, 0.15));
+        }
+
+        /* TITULOS CON EL NUEVO AZUL FUERTE */
+        .title {
+            font-size: 28px;
+            font-weight: 800;
+            color: #2d4e83; /* El tono azul fuerte del login */
+            margin-bottom: 5px;
+            line-height: 1.1;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 35px;
+            font-weight: 400;
+        }
+
+        /* OPCIONES AZULES */
+        .option {
+            width: 100%;
+            background: #f0f4f8; /* Azul muy clarito para el fondo */
+            color: #2d4e83;
+            border-radius: 20px;
+            padding: 14px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 700;
+            font-size: 14px;
+            box-sizing: border-box;
+            border: 1px solid #d0dae5;
+        }
+
+        .option:hover {
+            transform: scale(1.02);
+            background: #2d4e83;
+            color: white;
+            border-color: #2d4e83;
+            box-shadow: 0 8px 15px rgba(45, 78, 131, 0.2);
+        }
+
+        /* BOTÓN VOLVER */
+        .back {
+            margin-top: auto;
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: #888;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .back span {
+            color: #2d4e83;
+            font-weight: 800;
+            text-decoration: underline;
+        }
+
+        .back:hover {
+            color: #2d4e83;
+        }
+
+        /* DECORACIÓN DE FONDO (Aura azul sutil) */
+        .circle {
+            position: absolute;
+            background: linear-gradient(135deg, rgba(74, 122, 181, 0.08), rgba(45, 78, 131, 0.04));
+            border-radius: 50%;
+            z-index: 1;
+        }
+        .c1 { width: 250px; height: 250px; top: -80px; right: -80px; }
+        .c2 { width: 180px; height: 180px; bottom: -50px; left: -50px; }
+
+    </style>
+</head>
+
+<body>
+
+<div class="phone-frame">
+    <div class="phone">
+        <div class="notch"></div>
+        
+        <div class="circle c1"></div>
+        <div class="circle c2"></div>
+
+        <div class="screen">
+            <div class="logo">
+                <img src="imagenes/logo3.png" alt="Logo Serena"> 
+            </div>
+
+            <div class="title">Crear cuenta</div>
+            <div class="subtitle">Selecciona tu tipo de usuario</div>
+
+            <div class="option" onclick="location.href='registroEmpresa.html'">Empresa / RRHH</div>
+            <div class="option" onclick="location.href='registroPsicologo.html'">Psicólogo</div>
+            <div class="option" onclick="location.href='registroTrabajador.html'">Trabajador</div>
+            <div class="option" onclick="location.href='registroGeneral.html'">Usuario General</div>
+
+            <div class="back" onclick="location.href='login.html'">
+                ¿Ya tienes cuenta? <span>Inicia sesión</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

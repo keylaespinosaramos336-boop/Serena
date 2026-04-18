@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Serena</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> <!-- agregue esto para el responsivo -->
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f4f7f9;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow: hidden; /* Evita scrolls innecesarios */
+        }
+        
+        /* --- ESTILO PARA ESCRITORIO (FRAME DE TELÉFONO) --- */
+        @media (min-width: 768px) {
+            .phone-frame {
+                width: 380px;
+                height: 760px;
+                background: #1a1a1a;
+                border-radius: 50px;
+                padding: 15px;
+                box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .phone {
+                width: 340px;
+                height: 680px;
+                border-radius: 40px;
+            }
+        }
+        
+        /* --- ESTILO PARA MÓVIL (PANTALLA COMPLETA) --- */
+        @media (max-width: 767px) {
+            body { background: linear-gradient(180deg, #4a7ab5 0%, #2d4e83 100%); }
+            .phone-frame { display: none; } /* Ocultamos el marco en el cel */
+            .phone {
+                width: 100vw;
+                height: 100vh;
+                border-radius: 0;
+            }
+            .notch { display: none; } /* El notch no se necesita en pantalla completa */
+        }
+
+        /**.phone-frame {
+            width: 380px;
+            height: 760px;
+            background: #1a1a1a;
+            border-radius: 50px;
+            padding: 15px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }**/
+
+        .phone {
+            /**width: 340px;
+            height: 680px;**/
+            background: linear-gradient(180deg, #4a7ab5 0%, #2d4e83 100%);
+            /**border-radius: 40px;**/
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            color: white;
+        }
+
+        .notch {
+            width: 120px;
+            height: 25px;
+            background: #1a1a1a;
+            border-radius: 0 0 20px 20px;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+
+        .screen {
+            flex: 1;
+            padding: 40px 30px 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 5;
+            text-align: center;
+        }
+
+        .welcome-text {
+            margin-top: 30px;
+            margin-bottom: 5px;
+        }
+
+        .welcome-text span {
+            display: block;
+            text-transform: uppercase;
+            font-size: 13px;
+            /* SECCIÓN MODIFICADA: Aumentamos el espaciado aquí */
+            letter-spacing: 10px; 
+            font-weight: 400;
+            opacity: 0.8;
+            margin-bottom: 4px;
+            /* Añadimos un pequeño margen derecho para compensar el último espacio */
+            text-indent: 8px; 
+        }
+
+        .title {
+            font-size: 42px;
+            font-weight: 800;
+            margin: 0;
+            line-height: 1;
+            letter-spacing: -1px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo-container {
+            flex: 1.5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .logo-container img {
+            width: 200px;
+            height: auto;
+            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.5))
+                    /**drop-shadow(0 10px 20px rgba(0,0,0,0.15));**/
+        }
+
+        .login-box {
+            width: 100%;
+            margin-top: auto;
+        }
+
+        input {
+            width: 85%; 
+            margin: 0 auto 15px auto;
+            display: block; 
+            text-align: center; 
+            padding: 12px; 
+            background: transparent !important;
+            border: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3); 
+            font-size: 16px; 
+            box-sizing: border-box;
+            font-family: inherit;
+            outline: none;
+            color: white !important;
+            transition: all 0.3s ease;
+        }
+
+        input:-webkit-autofill {
+            -webkit-box-shadow: 0 0 0 30px rgba(0,0,0,0) inset !important;
+            -webkit-text-fill-color: white !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 13px; 
+        }
+
+        .login-btn {
+            width: 90%; 
+            padding: 16px;
+            border: none;
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            background: white;
+            color: #2d4e83; 
+            margin-top: 20px; 
+            /**margin-bottom: 15px;**/
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .register-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 15px;
+            opacity: 0.8;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .register-btn span {
+            text-decoration: underline;
+            font-weight: 700;
+        }
+
+        .circle {
+            position: absolute;
+            background: rgba(255,255,255,0.06);
+            border-radius: 50%;
+            z-index: 1;
+        }
+        .c1 { width: 250px; height: 250px; top: -50px; right: -80px; }
+        .c2 { width: 180px; height: 180px; bottom: 150px; left: -50px; }
+
+    </style>
+</head>
+<body>
+
+<div class="phone-frame">
+    <div class="phone">
+        <div class="notch"></div>
+        <div class="circle c1"></div>
+        <div class="circle c2"></div>
+
+        <div class="screen">
+            <div class="welcome-text">
+                <span>Bienvenido a</span>
+                <h1 class="title">Serena</h1>
+            </div>
+
+            <div class="logo-container">
+                <img src="imagenes/logo2.png" alt="Logo Serena">
+            </div>
+
+            <div class="login-box">
+                <form action="../loginServlet" method="post">
+                    <input type="email" name="correo" placeholder="correo@ejemplo.com" required autocomplete="off">
+                    <input type="password" name="password" placeholder="contraseña" required autocomplete="off">
+                    <button type="submit" class="login-btn">Ingresar</button>
+                </form>
+                
+                <button class="register-btn" onclick="location.href='tipoCuenta.html'">
+                    ¿No tienes cuenta? <span>Regístrate</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

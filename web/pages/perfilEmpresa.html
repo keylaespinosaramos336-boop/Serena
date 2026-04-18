@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Perfil Empresa - Serena</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+body{
+  margin:0;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#e6e6e6;
+  font-family:'Plus Jakarta Sans', sans-serif;
+}
+
+.phone-frame{
+  width:380px;
+  height:760px;
+  background:black;
+  border-radius:50px;
+  padding:15px;
+  box-shadow:0 30px 60px rgba(0,0,0,0.4);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.phone{
+  width:340px;
+  height:680px;
+  background:linear-gradient(180deg,#6aa3d6,#3f6ba9);
+  border-radius:40px;
+  overflow:hidden;
+  color:white;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+}
+
+.notch{
+  width:120px;
+  height:25px;
+  background:black;
+  border-radius:0 0 20px 20px;
+  position:absolute;
+  top:0;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:10;
+}
+
+.header{
+  padding:50px 25px 20px 25px;
+  text-align:center;
+}
+
+.header h1{
+  margin:0;
+  font-size:20px;
+  font-weight:bold;
+}
+
+.content{
+  flex:1;
+  padding:0 0 90px 0;
+  overflow-y:auto;
+  scrollbar-width:none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.content::-webkit-scrollbar { display:none; }
+
+.profile-container {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.company-image-circle{
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid rgba(255,255,255,0.4);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  display: block;
+  margin: 0 auto;
+}
+
+.image-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 15px;
+    margin-bottom: 20px;
+}
+
+.action-btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-change { background: white; color: #3f6ba9; }
+.btn-delete { background: rgba(255, 255, 255, 0.2); color: white; }
+.action-btn:hover { transform: scale(1.05); opacity: 0.9; }
+
+.company-info{
+  width: 85%;
+  margin: 10px 0;
+  padding: 15px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 20px;
+  backdrop-filter: blur(5px);
+}
+
+.info-group {
+    margin-bottom: 12px;
+}
+
+.company-info h4{
+  margin: 0;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.7;
+}
+
+.company-info p{
+  margin: 4px 0 0 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.edit-btn{
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  border: none;
+  border-radius: 12px;
+  background: #00bfff;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+/* ===== SECCIÓN CÓDIGO DE EMPRESA ===== */
+.code-section {
+  width: 85%;
+  margin: 10px 0 16px 0;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 20px;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+}
+
+.code-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.code-section-header span {
+  font-size: 16px;
+}
+
+.code-section h3 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.code-section .subtitle {
+  font-size: 11px;
+  opacity: 0.65;
+  margin: 0 0 14px 0;
+  line-height: 1.4;
+}
+
+/* Caja de código generado */
+.code-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255,255,255,0.12);
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  min-height: 40px;
+}
+
+.code-value {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 6px;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+
+.code-placeholder {
+  font-size: 13px;
+  opacity: 0.45;
+  font-style: italic;
+}
+
+.copy-btn {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 14px;
+  padding: 6px 8px;
+  cursor: pointer;
+  transition: 0.2s;
+  flex-shrink: 0;
+}
+.copy-btn:hover { background: rgba(255,255,255,0.35); transform: scale(1.05); }
+.copy-btn:active { transform: scale(0.95); }
+
+/* Botones de acción del código */
+.code-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.gen-btn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.btn-generate {
+  background: linear-gradient(135deg, #00d4ff, #007bff);
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.35);
+}
+
+.btn-regenerate {
+  background: rgba(255,255,255,0.15);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.25);
+}
+
+.gen-btn:hover { transform: scale(1.03); opacity: 0.92; }
+.gen-btn:active { transform: scale(0.97); }
+
+/* Badge "Activo" */
+.code-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(0, 220, 130, 0.2);
+  border: 1px solid rgba(0, 220, 130, 0.5);
+  color: #00dc82;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 20px;
+  margin-top: 10px;
+  letter-spacing: 0.5px;
+}
+
+.code-badge .dot {
+  width: 6px;
+  height: 6px;
+  background: #00dc82;
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* Toast de copiado */
+.toast {
+  position: absolute;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-10px);
+  background: rgba(0,0,0,0.75);
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 7px 16px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+  pointer-events: none;
+  z-index: 20;
+  white-space: nowrap;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* MENU INFERIOR */
+.menu{
+  position:absolute;
+  bottom:0;
+  width:100%;
+  height:70px;
+  background:rgba(0,0,0,0.5);
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+  font-size:12px;
+  backdrop-filter: blur(10px);
+}
+
+.menu div{
+  text-align:center;
+  cursor:pointer;
+  padding:8px 10px;
+  border-radius:12px;
+  transition:0.2s;
+}
+
+.menu .active{
+  background:rgba(255,255,255,0.25);
+  transform:scale(1.05);
+  font-weight:bold;
+}
+</style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="toast" id="toast">✅ Código copiado</div>
+
+    <div class="header">
+      <h1>Perfil Corporativo</h1>
+    </div>
+
+    <div class="content">
+      <div class="profile-container">
+        <img src="https://i.postimg.cc/VJtRkHZ4/empresa.png" alt="Empresa" class="company-image-circle">
+        
+        <div class="image-actions">
+            <button class="action-btn btn-change">📷 Cambiar foto</button>
+            <button class="action-btn btn-delete">🗑️ Eliminar</button>
+        </div>
+      </div>
+
+      <div class="company-info">
+        <div class="info-group">
+            <h4>Razón Social</h4>
+            <p>SHERPEL Acabando S.A. de C.V.</p>
+        </div>
+
+        <div class="info-group">
+            <h4>Dirección Sede</h4>
+            <p>Av. Principal #123, Ciudad, Estado</p>
+        </div>
+
+        <div class="info-group">
+            <h4>Contacto Oficial</h4>
+            <p>contacto@empresa.com</p>
+        </div>
+
+        <button class="edit-btn">Editar Datos Generales</button>
+      </div>
+
+      <!-- SECCIÓN CÓDIGO DE ACCESO -->
+      <div class="code-section">
+        <div class="code-section-header">
+          <span>🔑</span>
+          <h3>Código de Acceso para Empleados</h3>
+        </div>
+        <p class="subtitle">Los empleados necesitan este código para unirse a tu empresa en la app.</p>
+
+        <div class="code-display" id="codeDisplay">
+          <span class="code-placeholder" id="codePlaceholder">Sin código generado</span>
+          <span class="code-value" id="codeValue" style="display:none;"></span>
+          <button class="copy-btn" id="copyBtn" style="display:none;" onclick="copyCode()">📋</button>
+        </div>
+
+        <div class="code-actions">
+          <button class="gen-btn btn-generate" id="generateBtn" onclick="generateCode()">✨ Generar Código</button>
+          <button class="gen-btn btn-regenerate" id="regenBtn" style="display:none;" onclick="generateCode()">🔄 Renovar</button>
+        </div>
+
+        <div class="code-badge" id="codeBadge" style="display:none;">
+          <span class="dot"></span> ACTIVO
+        </div>
+      </div>
+
+    </div>
+
+    <div class="menu">
+      <div>🏠<br>Home</div>
+      <div>👨‍💼<br>Empleados</div>
+      <div class="active">🏢<br>Perfil</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function generateCode() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let code = '';
+    for (let i = 0; i < 6; i++) {
+        code += chars[Math.floor(Math.random() * chars.length)];
+    }
+
+    // --- NUEVA LÓGICA PARA ENVIAR AL SERVIDOR ---
+    fetch('../guardarCodigoServlet', { // Ruta de tu nuevo Servlet
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'codigo=' + code
+    })
+    .then(response => {
+        if (response.ok) {
+            // Si el servidor respondió bien, mostramos en la interfaz
+            document.getElementById('codePlaceholder').style.display = 'none';
+            document.getElementById('codeValue').style.display = 'block';
+            document.getElementById('codeValue').textContent = code;
+            document.getElementById('copyBtn').style.display = 'block';
+            document.getElementById('codeBadge').style.display = 'inline-flex';
+            document.getElementById('generateBtn').style.display = 'none';
+            document.getElementById('regenBtn').style.display = 'flex';
+        } else {
+            alert("Error al guardar el código en el servidor");
+        }
+    });
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+# --- NetBeans / IDE ---
+nbproject/private/
+build/
+dist/
+target/
+.nb-gradle/
+
+# --- Configuración y Secretos ---
+# Aquí ignoramos archivos que podrían tener tu contraseña de BD
+*.properties
+*.xml
+*.env
+
+# --- Sistema operativo ---
+.DS_Store
+Thumbs.db
