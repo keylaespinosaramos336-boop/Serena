@@ -346,12 +346,12 @@ Pausas activas
 <script>
 // Lista de reproducción con títulos y rutas de video
 const playlist = [
-    { title: 'Estiramientos en silla', src: 'imagenes/estiramiento-silla.mp4', img: 'https://plus.unsplash.com/premium_photo-1661438486473-78494571fbeb?q=80&w=1170&auto=format&fit=crop' },
-    { title: 'Respiración cuadrada', src: 'imagenes/respiracion-cuadrada.mp4', img: 'https://images.unsplash.com/photo-1713428856048-d52b6474b5f7?q=80&w=1170&auto=format&fit=crop' },
-    { title: 'Descanso visual', src: 'imagenes/descanso-visual.mp4', img: 'https://plus.unsplash.com/premium_photo-1661304634388-28a1f48892ab?q=80&w=1169&auto=format&fit=crop' },
-    { title: 'Relajación muscular', src: 'imagenes/relajacion-muscular.mp4', img: 'https://plus.unsplash.com/premium_photo-1682094607329-ee8bb3968762?q=80&w=1170&auto=format&fit=crop' },
-    { title: 'Meditación de gratitud', src: 'imagenes/gratitud.mp4', img: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773' },
-    { title: 'Movilidad de manos y muñecas', src: 'imagenes/movilidad.mp4', img: 'https://plus.unsplash.com/premium_photo-1679164458634-163862c284bd?q=80&w=687&auto=format&fit=crop' }
+    { title: 'Estiramientos en silla', src: 'https://ia902907.us.archive.org/9/items/estiramiento-silla/estiramiento-silla.mp4', img: 'https://plus.unsplash.com/premium_photo-1661438486473-78494571fbeb?q=80&w=1170&auto=format&fit=crop' },
+    { title: 'Respiración cuadrada', src: 'https://ia903206.us.archive.org/2/items/respiracion-cuadrada/respiracion-cuadrada.mp4', img: 'https://images.unsplash.com/photo-1713428856048-d52b6474b5f7?q=80&w=1170&auto=format&fit=crop' },
+    { title: 'Descanso visual', src: 'https://ia600604.us.archive.org/33/items/descanso-visual/descanso-visual.mp4', img: 'https://plus.unsplash.com/premium_photo-1661304634388-28a1f48892ab?q=80&w=1169&auto=format&fit=crop' },
+    { title: 'Relajación muscular', src: 'https://ia601408.us.archive.org/31/items/relajacion-muscular/relajacion-muscular.mp4', img: 'https://plus.unsplash.com/premium_photo-1682094607329-ee8bb3968762?q=80&w=1170&auto=format&fit=crop' },
+    { title: 'Meditación de gratitud', src: 'https://ia903106.us.archive.org/1/items/gratitud_202604/gratitud.mp4', img: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773' },
+    { title: 'Movilidad de manos y muñecas', src: 'https://ia902805.us.archive.org/10/items/movilidad_202604/movilidad.mp4', img: 'https://plus.unsplash.com/premium_photo-1679164458634-163862c284bd?q=80&w=687&auto=format&fit=crop' }
 ];
 
 let currentTrackIndex = 0;

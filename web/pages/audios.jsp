@@ -340,12 +340,12 @@ Tu espacio de sintonía
 <script>
 // 1. Lista de reproducción (Verifica que las rutas de audio sean correctas)
 const playlist = [
-    { title: 'Concentración profunda', img: 'https://images.unsplash.com/photo-1758876201566-990fd4e0f3c5?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', src: 'imagenes/super-concentracion.mp3' },
-    { title: 'Ansiedad o TDAH', img: 'https://plus.unsplash.com/premium_photo-1689177357589-fb06fc00da07?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', src: 'imagenes/ruido-marron.mp3' },
-    { title: 'Trabajo dinámico', img: 'https://plus.unsplash.com/premium_photo-1683121598398-7293901ce62a?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', src: 'imagenes/hiphop.mp3' },
-    { title: 'Un extra de cratividad', img: 'https://images.unsplash.com/photo-1562815240-be666d2600ce?q=80&w=1234&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', src: 'imagenes/ambiente-cafe.mp3' },
-    { title: 'Positivismo y confianza', img: 'https://plus.unsplash.com/premium_photo-1723914096379-1cb4de74617c?q=80&w=896&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', src: 'imagenes/afirmaciones.mp3' },
-    { title: 'Estimulante en segundo plano', img: 'https://plus.unsplash.com/premium_photo-1682090682368-dfee64657261?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', src: 'imagenes/videojuegos.mp3' }
+    { title: 'Concentración profunda', img: 'https://images.unsplash.com/photo-1758876201566-990fd4e0f3c5?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', src: 'https://ia601007.us.archive.org/19/items/super-concentracion/super-concentracion.mp3' },
+    { title: 'Ansiedad o TDAH', img: 'https://plus.unsplash.com/premium_photo-1689177357589-fb06fc00da07?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', src: 'https://ia902902.us.archive.org/4/items/ruido-marron/ruido-marron.mp3' },
+    { title: 'Trabajo dinámico', img: 'https://plus.unsplash.com/premium_photo-1683121598398-7293901ce62a?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', src: 'https://ia800808.us.archive.org/17/items/hiphop_202604/hiphop.mp3' },
+    { title: 'Un extra de cratividad', img: 'https://images.unsplash.com/photo-1562815240-be666d2600ce?q=80&w=1234&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', src: 'https://ia601406.us.archive.org/11/items/ambiente-cafe/ambiente-cafe.mp3' },
+    { title: 'Positivismo y confianza', img: 'https://plus.unsplash.com/premium_photo-1723914096379-1cb4de74617c?q=80&w=896&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', src: 'https://ia903101.us.archive.org/19/items/afirmaciones-trabajo/afirmaciones-trabajo.mp3' },
+    { title: 'Estimulante en segundo plano', img: 'https://plus.unsplash.com/premium_photo-1682090682368-dfee64657261?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', src: 'https://ia601400.us.archive.org/27/items/videojuegos_202604/videojuegos.mp3' }
 ];
 
 let currentTrackIndex = 0;

@@ -340,12 +340,12 @@ Sueño y relajación
 <script>
 // Lista de reproducción con rutas reales
 const playlist = [
-    { title: 'Sonido de olas', img: 'https://images.unsplash.com/photo-1593923416234-c99746aff9c8?q=80&w=687&auto=format&fit=crop', src: 'imagenes/olas.mp3' },
-    { title: 'Lluvia nocturna', img: 'https://plus.unsplash.com/premium_photo-1666717576644-5701d3406840?q=80&w=687&auto=format&fit=crop', src: 'imagenes/lluvia.mp3' },
-    { title: 'Campamento en el bosque', img: 'https://images.unsplash.com/photo-1596326270561-cf62ad4f1d0b?q=80&w=677&auto=format&fit=crop', src: 'imagenes/bosque.mp3' },
-    { title: 'ASMR relajante', img: 'https://images.unsplash.com/photo-1519681393784-d120267933ba', src: 'imagenes/asmr.mp3' },
-    { title: 'Música para dormir', img: 'https://images.unsplash.com/photo-1673105665361-79b1ef1c4b69?q=80&w=687&auto=format&fit=crop', src: 'imagenes/musica.mp3' },
-    { title: 'Afirmaciones positivas', img: 'https://images.unsplash.com/photo-1512223886638-d2914abf5df3?q=80&w=1170&auto=format&fit=crop', src: 'imagenes/afirmaciones.mp3' }
+    { title: 'Sonido de olas', img: 'https://images.unsplash.com/photo-1593923416234-c99746aff9c8?q=80&w=687&auto=format&fit=crop', src: 'https://ia600406.us.archive.org/33/items/olas_20260419/olas.mp3' },
+    { title: 'Lluvia nocturna', img: 'https://plus.unsplash.com/premium_photo-1666717576644-5701d3406840?q=80&w=687&auto=format&fit=crop', src: 'https://ia600909.us.archive.org/25/items/lluvia_202604/lluvia.mp3' },
+    { title: 'Campamento en el bosque', img: 'https://images.unsplash.com/photo-1596326270561-cf62ad4f1d0b?q=80&w=677&auto=format&fit=crop', src: 'https://ia600804.us.archive.org/28/items/bosque_202604/bosque.mp3' },
+    { title: 'ASMR relajante', img: 'https://images.unsplash.com/photo-1519681393784-d120267933ba', src: 'https://ia600703.us.archive.org/33/items/asmr_20260419/asmr.mp3' },
+    { title: 'Música para dormir', img: 'https://images.unsplash.com/photo-1673105665361-79b1ef1c4b69?q=80&w=687&auto=format&fit=crop', src: 'https://ia600606.us.archive.org/31/items/musica_20260419/musica.mp3' },
+    { title: 'Afirmaciones positivas', img: 'https://images.unsplash.com/photo-1512223886638-d2914abf5df3?q=80&w=1170&auto=format&fit=crop', src: 'https://ia600706.us.archive.org/30/items/afirmaciones/afirmaciones.mp3' }
 ];
 
 let currentTrackIndex = 0;
