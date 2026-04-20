@@ -9,9 +9,13 @@ import javax.servlet.http.*;
 @WebServlet(name = "registroPsicologoServlet", urlPatterns = {"/registroPsicologoServlet"})
 public class registroPsicologoServlet extends HttpServlet {
 
-    private final String URL = "jdbc:mysql://localhost:3306/bd_serena";
-    private final String USER = "root";
-    private final String PASS = "Keylabd2603";
+    private final String URL = System.getenv().getOrDefault(
+        "DB_URL",
+        "jdbc:mysql://roundhouse.proxy.rlwy.net:45224/railway?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8"
+    );
+
+    private final String USER = System.getenv().getOrDefault("DB_USER", "root");
+    private final String PASS = System.getenv().getOrDefault("DB_PASS", "vYBluCJLeLEqOKtswQfDAzlRkyxRVAKF");
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -40,7 +44,7 @@ public class registroPsicologoServlet extends HttpServlet {
             con.setAutoCommit(false); 
 
             // 3. Insertar en tabla 'Usuario' (Nota la U mayúscula como en tu script)
-            String sqlUsuario = "INSERT INTO Usuario (nombre, correo, password, tipo_usuario, fecha_registro) VALUES (?, ?, ?, 'psicologo', NOW())";
+            String sqlUsuario = "INSERT INTO usuario (nombre, correo, password, tipo_usuario, fecha_registro) VALUES (?, ?, ?, 'psicologo', NOW())";
             PreparedStatement psUser = con.prepareStatement(sqlUsuario, Statement.RETURN_GENERATED_KEYS);
             psUser.setString(1, nombre);
             psUser.setString(2, correo);

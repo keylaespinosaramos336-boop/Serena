@@ -8,6 +8,14 @@ import javax.servlet.http.*;
 
 @WebServlet(name = "registroEmpresaServlet", urlPatterns = {"/registroEmpresaServlet"})
 public class registroEmpresaServlet extends HttpServlet {
+    
+    private final String URL = System.getenv().getOrDefault(
+        "DB_URL",
+        "jdbc:mysql://roundhouse.proxy.rlwy.net:45224/railway?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8"
+    );
+
+    private final String USER = System.getenv().getOrDefault("DB_USER", "root");
+    private final String PASS = System.getenv().getOrDefault("DB_PASS", "vYBluCJLeLEqOKtswQfDAzlRkyxRVAKF");
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -23,11 +31,10 @@ public class registroEmpresaServlet extends HttpServlet {
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            try (Connection con = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/bd_serena", "root", "Keylabd2603")) {
+            try (Connection con = DriverManager.getConnection(URL, USER, PASS)) {
 
                 // 2. SQL de inserción según tu tabla 'Empresa'
-                String sql = "INSERT INTO Empresa (nombre, nombre_encargado, correo, password, numero_empleados, fecha_registro) VALUES (?, ?, ?, ?, ?, CURDATE())";
+                String sql = "INSERT INTO empresa (nombre, nombre_encargado, correo, password, numero_empleados, fecha_registro) VALUES (?, ?, ?, ?, ?, CURDATE())";
                 
                 try (PreparedStatement pst = con.prepareStatement(sql)) {
                     pst.setString(1, nombreE);

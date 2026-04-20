@@ -29,9 +29,13 @@ import com.serena.ChatLista;
 public class ListarPsicologosServlet extends HttpServlet {
 
     // --- CONFIGURACIÓN DE CONEXIÓN ---
-    private final String DB_URL = "jdbc:mysql://localhost:3306/bd_serena";
-    private final String DB_USER = "root";
-    private final String DB_PASS = "Keylabd2603";
+    private final String URL = System.getenv().getOrDefault(
+        "DB_URL",
+        "jdbc:mysql://roundhouse.proxy.rlwy.net:45224/railway?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8"
+    );
+
+    private final String USER = System.getenv().getOrDefault("DB_USER", "root");
+    private final String PASS = System.getenv().getOrDefault("DB_PASS", "vYBluCJLeLEqOKtswQfDAzlRkyxRVAKF");
 
     // --- CONFIGURACIÓN DE GEMINI API ---
     private static final String API_KEY = "AIzaSyAqQI6q-VKENwOQD8JIGg1eshdYYAu3naI";
@@ -58,11 +62,11 @@ public class ListarPsicologosServlet extends HttpServlet {
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            try (Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS)) {
+            try (Connection con = DriverManager.getConnection(URL, USER, PASS)) {
                 
                 // 1. Cargar Psicólogos
                 String sqlPsico = "SELECT u.id_usuario, u.nombre, u.foto, p.cedula, p.especialidad, p.experiencia, p.modalidad  " +
-                                 "FROM Usuario u INNER JOIN psicologo p ON u.id_usuario = p.id_usuario";
+                                 "FROM usuario u INNER JOIN psicologo p ON u.id_usuario = p.id_usuario";
                 PreparedStatement ps1 = con.prepareStatement(sqlPsico);
                 ResultSet rs1 = ps1.executeQuery();
                 while (rs1.next()) {
@@ -82,7 +86,7 @@ public class ListarPsicologosServlet extends HttpServlet {
                         "SELECT u2.id_usuario, u2.nombre, u2.foto, m.mensaje, c.id_chat " +
                         "FROM chat_psicologo c " +
                         "JOIN psicologo p ON c.id_psicologo = p.id_psicologo " +
-                        "JOIN Usuario u2 ON p.id_usuario = u2.id_usuario " +
+                        "JOIN usuario u2 ON p.id_usuario = u2.id_usuario " +
                         "LEFT JOIN mensaje_psicologo m ON c.id_chat = m.id_chat " +
                         "WHERE c.id_usuario = ? AND (m.id_mensaje = (SELECT MAX(id_mensaje) " +
                         "FROM mensaje_psicologo WHERE id_chat = c.id_chat) OR m.id_mensaje IS NULL)";

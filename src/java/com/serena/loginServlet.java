@@ -9,10 +9,14 @@ import javax.servlet.http.*;
 @WebServlet(name = "loginServlet", urlPatterns = {"/loginServlet"})
 public class loginServlet extends HttpServlet {
 
-    // Configuración de conexión (Verificada con tu script SQL)
-    private final String URL = "jdbc:mysql://localhost:3306/bd_serena?useSSL=false&serverTimezone=UTC";
-    private final String USER = "root";
-    private final String PASS = "Keylabd2603";
+    // 🔥 CONFIGURACIÓN FLEXIBLE (Railway + local)
+    private final String URL = System.getenv().getOrDefault(
+        "DB_URL",
+        "jdbc:mysql://roundhouse.proxy.rlwy.net:45224/railway?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8"
+    );
+
+    private final String USER = System.getenv().getOrDefault("DB_USER", "root");
+    private final String PASS = System.getenv().getOrDefault("DB_PASS", "vYBluCJLeLEqOKtswQfDAzlRkyxRVAKF");
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -32,7 +36,9 @@ public class loginServlet extends HttpServlet {
             Class.forName("com.mysql.cj.jdbc.Driver");
             try (Connection con = DriverManager.getConnection(URL, USER, PASS)) {
 
-                // --- CASO A: SI INGRESÓ UN CÓDIGO (Es trabajador de una empresa) ---
+                // ======================================================
+                // 🔵 CASO A: USUARIO CON CÓDIGO DE EMPRESA
+                // ======================================================
                 if (codigoIngresado != null && !codigoIngresado.trim().isEmpty()) {
                     // Nota: Se usa 'usuario' y 'empresa' en minúsculas para coincidir con el Workbench
                     String sqlEmpleado = "SELECT u.nombre, u.tipo_usuario, u.id_usuario, e.id_empresa " +
@@ -63,9 +69,9 @@ public class loginServlet extends HttpServlet {
                     }
                 }
 
-                // --- CASO B: NO HAY CÓDIGO (Psicólogo, General o Empresa Directa) ---
-                
-                // --- CASO B.1: Intentar en la tabla 'usuario' (Psicólogos o Usuarios Generales) ---
+                // ======================================================
+                // 🟢 CASO B: USUARIO GENERAL / PSICÓLOGO
+                // ======================================================
                 String sqlGen = "SELECT id_usuario, nombre, tipo_usuario FROM usuario WHERE correo=? AND password=?";
                 try (PreparedStatement pstG = con.prepareStatement(sqlGen)) {
                     pstG.setString(1, correo);
@@ -82,7 +88,7 @@ public class loginServlet extends HttpServlet {
                             session.setAttribute("nombreUsuario", nombre);
                             session.setAttribute("tipoUsuario", tipo);
 
-                            // --- LÓGICA EXTRA PARA PSICÓLOGOS ---
+                            // 🔥 SI ES PSICÓLOGO
                             if ("psicologo".equalsIgnoreCase(tipo)) {
                                 // Buscamos su ID específico en la tabla psicologo
                                 String sqlPsi = "SELECT id_psicologo FROM psicologo WHERE id_usuario = ?";
@@ -98,9 +104,10 @@ public class loginServlet extends HttpServlet {
                                 response.sendRedirect("pages/homePsicologo.jsp"); 
                             } 
                             // --- FIN LÓGICA EXTRA ---
-
+                            // 🔵 EMPLEADO SIN CÓDIGO
                             else if("empleado".equalsIgnoreCase(tipo)){
                                 response.sendRedirect("pages/homeTrabajador.jsp");
+                                // 🟡 GENERAL
                             } else {
                                 response.sendRedirect("pages/homeGeneral.jsp");
                             }
@@ -109,7 +116,9 @@ public class loginServlet extends HttpServlet {
                     }
                 }
 
-                // B.2 Intentar en la tabla 'empresa' (Si es la cuenta principal de la empresa)
+                // ======================================================
+                // 🟠 CASO C: EMPRESA
+                // ======================================================
                 String sqlEmp = "SELECT id_empresa, nombre FROM empresa WHERE correo=? AND password=?";
                 try (PreparedStatement pstE = con.prepareStatement(sqlEmp)) {
                     pstE.setString(1, correo);

@@ -14,7 +14,16 @@ import javax.servlet.http.HttpSession;
 
 @WebServlet(name = "GuardarProgresoServlet", urlPatterns = {"/GuardarProgresoServlet"})
 public class GuardarProgresoServlet extends HttpServlet {
+    
+    // Definimos las constantes inteligentes arriba para no repetir código
+    private final String URL = System.getenv().getOrDefault(
+        "DB_URL",
+        "jdbc:mysql://roundhouse.proxy.rlwy.net:45224/railway?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8"
+    );
 
+    private final String USER = System.getenv().getOrDefault("DB_USER", "root");
+    private final String PASS = System.getenv().getOrDefault("DB_PASS", "vYBluCJLeLEqOKtswQfDAzlRkyxRVAKF");
+    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -47,9 +56,8 @@ public class GuardarProgresoServlet extends HttpServlet {
             Class.forName("com.mysql.cj.jdbc.Driver");
             
             // 4. URL DE CONEXIÓN CON UTF-8
-            String url = "jdbc:mysql://localhost:3306/bd_serena?useUnicode=true&characterEncoding=UTF-8";
             // Cambia esto en tu DriverManager.getConnection:
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/bd_serena?useUnicode=true&characterEncoding=UTF-8", "root", "Keylabd2603");
+            con = DriverManager.getConnection(URL, USER, PASS);
 
             // 5. SQL OPTIMIZADO (Usando VALUES() para no repetir parámetros)
             String sql = "INSERT INTO progreso_reproduccion (id_usuario, titulo_contenido, imagen_url, tiempo_reproducido, fecha) "

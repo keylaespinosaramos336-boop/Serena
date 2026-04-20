@@ -14,6 +14,15 @@ import javax.servlet.http.HttpSession;
 
 @WebServlet(name = "RegistroAnimoServlet", urlPatterns = {"/RegistroAnimoServlet"})
 public class RegistroAnimoServlet extends HttpServlet {
+    
+    // 1. Declaramos las constantes aquí arriba
+    private final String URL = System.getenv().getOrDefault(
+        "DB_URL",
+        "jdbc:mysql://roundhouse.proxy.rlwy.net:45224/railway?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8"
+    );
+
+    private final String USER = System.getenv().getOrDefault("DB_USER", "root");
+    private final String PASS = System.getenv().getOrDefault("DB_PASS", "vYBluCJLeLEqOKtswQfDAzlRkyxRVAKF");
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -36,11 +45,7 @@ public class RegistroAnimoServlet extends HttpServlet {
 
             // 2. Conexión a la BD
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/bd_serena?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC", 
-                "root", 
-                "Keylabd2603"
-            );
+            Connection con = DriverManager.getConnection(URL, USER, PASS);
 
             // 3. SQL corregido según tu archivo sql.sql (tabla 'registroanimo')
             // Se inserta id_usuario y porcentaje. La fecha se pone sola si en el SQL pusiste DEFAULT CURRENT_TIMESTAMP

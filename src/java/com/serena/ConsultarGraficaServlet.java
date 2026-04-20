@@ -14,10 +14,14 @@ import javax.servlet.http.HttpSession;
 @WebServlet(name = "ConsultarGraficaServlet", urlPatterns = {"/ConsultarGraficaServlet"})
 public class ConsultarGraficaServlet extends HttpServlet {
 
-    // Tus datos de conexión
-    private final String URL = "jdbc:mysql://localhost:3306/bd_serena?useSSL=false&serverTimezone=UTC";
-    private final String USER = "root";
-    private final String PASS = "Keylabd2603";
+    // Definimos las constantes inteligentes arriba para no repetir código
+    private final String URL = System.getenv().getOrDefault(
+        "DB_URL",
+        "jdbc:mysql://roundhouse.proxy.rlwy.net:45224/railway?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8"
+    );
+
+    private final String USER = System.getenv().getOrDefault("DB_USER", "root");
+    private final String PASS = System.getenv().getOrDefault("DB_PASS", "vYBluCJLeLEqOKtswQfDAzlRkyxRVAKF");
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)

@@ -13,6 +13,15 @@ import javax.servlet.http.HttpSession;
 
 @WebServlet(name = "GuardarCitaServlet", urlPatterns = {"/GuardarCitaServlet"})
 public class GuardarCitaServlet extends HttpServlet {
+    
+    // Definimos las constantes inteligentes arriba para no repetir código
+    private final String URL = System.getenv().getOrDefault(
+        "DB_URL",
+        "jdbc:mysql://roundhouse.proxy.rlwy.net:45224/railway?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8"
+    );
+
+    private final String USER = System.getenv().getOrDefault("DB_USER", "root");
+    private final String PASS = System.getenv().getOrDefault("DB_PASS", "vYBluCJLeLEqOKtswQfDAzlRkyxRVAKF");
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -43,7 +52,7 @@ public class GuardarCitaServlet extends HttpServlet {
         try {
             // 4. Conexión a la base de datos (ajusta tus credenciales)
             Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/bd_serena", "root", "Keylabd2603");
+            conn = DriverManager.getConnection(URL, USER, PASS);
 
             // 5. Query SQL basado en tu tabla 'cita'
             // Los ENUM 'virtual'/'presencial' y 'pendiente' deben ir en minúsculas como en tu BD

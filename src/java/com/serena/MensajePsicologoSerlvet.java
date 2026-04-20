@@ -13,9 +13,13 @@ import javax.servlet.http.*;
 @WebServlet(name = "MensajePsicologoSerlvet", urlPatterns = {"/MensajePsicologoSerlvet"})
 public class MensajePsicologoSerlvet extends HttpServlet {
 
-    private final String DB_URL = "jdbc:mysql://localhost:3306/bd_serena";
-    private final String DB_USER = "root";
-    private final String DB_PASS = "Keylabd2603";
+    private final String URL = System.getenv().getOrDefault(
+        "DB_URL",
+        "jdbc:mysql://roundhouse.proxy.rlwy.net:45224/railway?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8"
+    );
+
+    private final String USER = System.getenv().getOrDefault("DB_USER", "root");
+    private final String PASS = System.getenv().getOrDefault("DB_PASS", "vYBluCJLeLEqOKtswQfDAzlRkyxRVAKF");
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -58,7 +62,7 @@ public class MensajePsicologoSerlvet extends HttpServlet {
             int idPsicologoUsuario = Integer.parseInt(idPsicologoStr); // 👈 ESTE ES id_usuario
             Class.forName("com.mysql.cj.jdbc.Driver");
 
-            try (Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS)) {
+            try (Connection con = DriverManager.getConnection(URL, USER, PASS)) {
 
                 int idPsicologo = -1;
                 int idChat = -1;

@@ -1,8 +1,8 @@
 <%-- BLOQUE QUE SE AGREGA PARA RECUPERAR EL NOMBRE DEL LOGINSERVLET --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="java.sql.*" %>
+<%@ page import="java.sql.*, java.util.*"%>
 <%
-    // 1. Verificación de sesión: Si no hay ID, mandarlo al login
+    // 1. Verificación de sesión
     Integer idUsuario = (Integer) session.getAttribute("idUsuario");
     if (idUsuario == null) {
         response.sendRedirect("login.jsp");
@@ -11,38 +11,46 @@
     
     // 2. Lógica del nombre de usuario
     String nombreCompleto = (String) session.getAttribute("nombreUsuario");
-    String primerNombre = "Usuario"; 
+    String primerNombre = (nombreCompleto != null && !nombreCompleto.trim().isEmpty()) 
+                          ? nombreCompleto.trim().split(" ")[0] : "Usuario";
 
-    if (nombreCompleto != null && !nombreCompleto.trim().isEmpty()) {
-        int espacio = nombreCompleto.trim().indexOf(" ");
-        if (espacio != -1) {
-            primerNombre = nombreCompleto.trim().substring(0, espacio);
-        } else {
-            primerNombre = nombreCompleto.trim();
-        }
-    }
-    
-    // 3. Declaración de variables de BD (Aquí estaban tus errores)
+    // 3. Estructura para guardar datos de progreso (Carga antes, dibuja después)
+    List<Map<String, String>> listaProgreso = new ArrayList<>();
+
+    // Variables de entorno para Railway (si no están, usa local por defecto)
+    String URL = System.getenv().getOrDefault("DB_URL", "jdbc:mysql://roundhouse.proxy.rlwy.net:45224/railway?useSSL=false&serverTimezone=UTC");
+    String USER = System.getenv().getOrDefault("DB_USER", "root");
+    String PASS = System.getenv().getOrDefault("DB_PASS", "vYBluCJLeLEqOKtswQfDAzlRkyxRVAKF");
+
     Connection con = null;
-    ResultSet rsProgreso = null;
-    PreparedStatement psProgreso = null;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
 
     try {
         Class.forName("com.mysql.cj.jdbc.Driver");
-        // Tu conexión con la contraseña que me pasaste
-        con = DriverManager.getConnection("jdbc:mysql://localhost:3306/bd_serena", "root", "Keylabd2603");
+        con = DriverManager.getConnection(URL, USER, PASS);
         
         String sqlProgreso = "SELECT titulo_contenido, imagen_url, tiempo_reproducido FROM progreso_reproduccion " +
                              "WHERE id_usuario = ? AND fecha = CURDATE() ORDER BY id_progreso DESC";
         
-        psProgreso = con.prepareStatement(sqlProgreso);
-        psProgreso.setInt(1, idUsuario);
-        rsProgreso = psProgreso.executeQuery();
+        ps = con.prepareStatement(sqlProgreso);
+        ps.setInt(1, idUsuario);
+        rs = ps.executeQuery();
         
-        // NOTA: No cerramos la conexión aquí, se cierra al final del HTML 
-        // para que rsProgreso siga vivo mientras dibujamos las tarjetas.
+        while (rs.next()) {
+            Map<String, String> item = new HashMap<>();
+            item.put("titulo", rs.getString("titulo_contenido"));
+            item.put("imagen", rs.getString("imagen_url"));
+            item.put("tiempo", rs.getString("tiempo_reproducido"));
+            listaProgreso.add(item);
+        }
     } catch (Exception e) {
         e.printStackTrace();
+    } finally {
+        // Cierre inmediato de recursos: vital para que Railway no te bloquee
+        if (rs != null) try { rs.close(); } catch (SQLException e) {}
+        if (ps != null) try { ps.close(); } catch (SQLException e) {}
+        if (con != null) try { con.close(); } catch (SQLException e) {}
     }
 %>
 
@@ -370,40 +378,25 @@ html {
 
 <div class="section-title">Tu progreso hoy</div>
 
-<div id="lista-progreso" style="display: flex; flex-direction: column; gap: 12px;">
-    <% 
-        boolean hayActividad = false;
-        if (rsProgreso != null) {
-            while (rsProgreso.next()) { 
-                hayActividad = true;
-    %>
-                <div class="card-featured">
-                    <img src="<%= rsProgreso.getString("imagen_url") %>" class="card-img" onerror="this.src='https://via.placeholder.com/150?text=Audio'">
-                    <div class="card-info">
-                        <h4><%= rsProgreso.getString("titulo_contenido") %></h4>
-                        <p>Progreso: <%= rsProgreso.getString("tiempo_reproducido") %></p>
-                        <div class="card-play" 
-                            onclick="continuarSesion('<%= rsProgreso.getString("titulo_contenido") %>', '<%= rsProgreso.getString("tiempo_reproducido") %>')">
-                           ▶ Continuar sesión
+<div id="lista-progreso">
+                    <% if (listaProgreso.isEmpty()) { %>
+                        <div style="text-align:center; padding: 20px; opacity: 0.6; font-size: 13px;">
+                            <p>Aún no has escuchado nada hoy.<br>¡Comienza una sesión ahora!</p>
                         </div>
-                    </div>
+                    <% } else {
+                        for (Map<String, String> item : listaProgreso) { %>
+                            <div class="card-featured">
+                                <img src="<%= item.get("imagen") %>" class="card-img" onerror="this.src='https://via.placeholder.com/150?text=Audio'">
+                                <div class="card-info">
+                                    <h4><%= item.get("titulo") %></h4>
+                                    <p>Progreso: <%= item.get("tiempo") %></p>
+                                    <div class="card-play" onclick="continuarSesion('<%= item.get("titulo") %>', '<%= item.get("tiempo") %>')">
+                                        ▶ Continuar sesión
+                                    </div>
+                                </div>
+                            </div>
+                    <% } } %>
                 </div>
-    <% 
-            }
-        } 
-        
-        if (!hayActividad) { 
-    %>
-            <div style="text-align:center; padding: 20px; opacity: 0.6; font-size: 13px;">
-                <p>Aún no has escuchado nada hoy.<br>¡Comienza una sesión ahora!</p>
-            </div>
-    <% 
-        } 
-        
-        // Cerrar recursos después de usarlos
-        if (con != null) con.close(); 
-    %>
-</div>
 
 
 
@@ -423,47 +416,27 @@ html {
 
 <script>
 function registrarAnimo(valor) {
-    const botones = document.querySelectorAll('.mood-btn');
-    botones.forEach(btn => btn.style.opacity = '0.5');
-
-    // AGREGAMOS EL "../" ANTES DEL NOMBRE DEL SERVLET
     fetch('../RegistroAnimoServlet', { 
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: 'valor=' + valor 
     })
-    .then(response => response.text())
-    .then(data => {
-        botones.forEach(btn => btn.style.opacity = '1');
-        // Usamos includes por si el servidor devuelve espacios en blanco
-        if(data.trim() === "success") {
-            alert("¡Estado de ánimo guardado!");
-        } else {
-            alert("No se pudo guardar. Error: " + data);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert("Error de conexión con el servidor.");
-        botones.forEach(btn => btn.style.opacity = '1');
-    });
+    .then(res => res.text())
+    .then(data => { if(data.trim() === "success") alert("¡Guardado!"); else alert("Error: " + data); })
+    .catch(err => alert("Error de conexión"));
 }
 
 function continuarSesion(titulo, tiempo) {
     let destino = "audios.jsp"; // Por defecto
-    
     // Convertimos a minúsculas para comparar fácilmente
     const t = titulo.toLowerCase();
-    
     // Lógica de detección por palabras clave
-    if (t.includes("olas") || t.includes("lluvia") || t.includes("dormir") || t.includes("bosque") || t.includes("sueño")) {
+    if (t.includes("olas") || t.includes("lluvia") || t.includes("dormir") || t.includes("bosque") || t.includes("relajante") || t.includes("afirmaciones")) {
         destino = "sueno.jsp";
-    } else if (t.includes("relajación") || t.includes("meditar") || t.includes("pausa") || t.includes("respirar")) {
+    } else if (t.includes("estiramiento") || t.includes("respiración") || t.includes("visual") || t.includes("relajación") || t.includes("meditación") || t.includes("movilidad")) {
         destino = "meditar.jsp";
     }
-    
     console.log("Redirigiendo a: " + destino + " con el título: " + titulo);
-    
     // Redirigimos pasando los parámetros
     window.location.href = destino + "?titulo=" + encodeURIComponent(titulo) + "&tiempo=" + tiempo;
 }

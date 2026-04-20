@@ -11,10 +11,14 @@ import javax.servlet.http.*;
 public class registroTrabajadorServlet extends HttpServlet {
 
     // Configuración de conexión
-    private final String url = "jdbc:mysql://localhost:3306/bd_serena";
-    private final String user = "root"; 
-    private final String password = "Keylabd2603"; 
+    private final String URL = System.getenv().getOrDefault(
+        "DB_URL",
+        "jdbc:mysql://roundhouse.proxy.rlwy.net:45224/railway?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8"
+    );
 
+    private final String USER = System.getenv().getOrDefault("DB_USER", "root");
+    private final String PASS = System.getenv().getOrDefault("DB_PASS", "vYBluCJLeLEqOKtswQfDAzlRkyxRVAKF");
+    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -40,12 +44,19 @@ public class registroTrabajadorServlet extends HttpServlet {
         }
 
         try {
+            
+            System.out.println("URL BD: " + URL);
+            System.out.println("USER BD: " + USER);
+            System.out.println("PASS BD: " + PASS);
+            System.out.println("Intentando conectar...");
+
             Class.forName("com.mysql.cj.jdbc.Driver");
-            try (Connection con = DriverManager.getConnection(url, user, password)) {
+            try (Connection con = DriverManager.getConnection(URL, USER, PASS)) {
+                System.out.println("✅ Conexión exitosa");
 
                 // A. Buscar ID de la empresa
                 int idEmpresa = -1;
-                String sqlEmpresa = "SELECT id_empresa FROM Empresa WHERE codigo_empresa = ?";
+                String sqlEmpresa = "SELECT id_empresa FROM empresa WHERE codigo_empresa = ?";
                 try (PreparedStatement ps = con.prepareStatement(sqlEmpresa)) {
                     ps.setString(1, codigoEmpresa);
                     ResultSet rs = ps.executeQuery();
@@ -59,7 +70,7 @@ public class registroTrabajadorServlet extends HttpServlet {
                 }
 
                 // B. Insertar en tabla Usuario
-                String sqlUser = "INSERT INTO Usuario (nombre, correo, password, tipo_usuario, id_Empresa, fecha_registro) VALUES (?, ?, ?, ?, ?, NOW())";
+                String sqlUser = "INSERT INTO usuario (nombre, correo, password, tipo_usuario, id_Empresa, fecha_registro) VALUES (?, ?, ?, ?, ?, NOW())";
                 int idUsuarioGenerado = -1;
                 try (PreparedStatement ps = con.prepareStatement(sqlUser, Statement.RETURN_GENERATED_KEYS)) {
                     ps.setString(1, nombre);

@@ -12,9 +12,9 @@
     }
 
     String accion = (request.getParameter("accion") != null) ? request.getParameter("accion").trim() : null;
-    String dbUrl = "jdbc:mysql://localhost:3306/bd_serena?useUnicode=true&characterEncoding=UTF-8&useSSL=false";
-    String dbUser = "root";
-    String dbPass = "Keylabd2603";
+    String URL = System.getenv().getOrDefault("DB_URL", "jdbc:mysql://roundhouse.proxy.rlwy.net:45224/railway?useSSL=false&serverTimezone=UTC");
+    String USER = System.getenv().getOrDefault("DB_USER", "root");
+    String PASS = System.getenv().getOrDefault("DB_PASS", "vYBluCJLeLEqOKtswQfDAzlRkyxRVAKF");
 
     // --- VARIABLES DE DATOS ---
     String nombreUsuario = "Usuario";
@@ -34,7 +34,7 @@
     if (accion != null) {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            try (Connection con = DriverManager.getConnection(dbUrl, dbUser, dbPass)) {
+            try (Connection con = DriverManager.getConnection(URL, USER, PASS)) {
                 if ("borrarCuenta".equals(accion)) {
                     // Paso 1: Por si acaso, desactivamos el chequeo de llaves (opcional pero seguro)
                     Statement st = con.createStatement();
@@ -108,7 +108,7 @@
     // --- CONSULTA DE DATOS PARA MOSTRAR ---
     try {
         Class.forName("com.mysql.cj.jdbc.Driver");
-        Connection con = DriverManager.getConnection(dbUrl, dbUser, dbPass);
+        Connection con = DriverManager.getConnection(URL, USER, PASS);
         
         // 1. Datos personales
         PreparedStatement psUser = con.prepareStatement("SELECT u.nombre, u.foto, e.nombre as empresa FROM usuario u LEFT JOIN empresa e ON u.id_empresa = e.id_empresa WHERE u.id_usuario = ?");

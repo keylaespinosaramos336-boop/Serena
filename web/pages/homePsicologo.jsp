@@ -7,74 +7,69 @@
 <%
     // 1. RECUPERAR NOMBRE DEL USUARIO
     String nombreCompleto = (String) session.getAttribute("nombreUsuario");
-    String primerNombre = "Usuario"; 
+    String primerNombre = (nombreCompleto != null && !nombreCompleto.trim().isEmpty()) 
+                          ? nombreCompleto.trim().split(" ")[0] 
+                          : "Usuario";
 
-    if (nombreCompleto != null && !nombreCompleto.trim().isEmpty()) {
-        int espacio = nombreCompleto.trim().indexOf(" ");
-        if (espacio != -1) {
-            primerNombre = nombreCompleto.trim().substring(0, espacio);
-        } else {
-            primerNombre = nombreCompleto.trim();
-        }
-    }
+    // 2. CONFIGURACIÓN DE CONEXIÓN
+    String URL = System.getenv().getOrDefault("DB_URL", "jdbc:mysql://roundhouse.proxy.rlwy.net:45224/railway?useSSL=false&serverTimezone=UTC");
+    String USER = System.getenv().getOrDefault("DB_USER", "root");
+    String PASS = System.getenv().getOrDefault("DB_PASS", "vYBluCJLeLEqOKtswQfDAzlRkyxRVAKF");
 
-    // 2. CARGAR LISTA DE PACIENTES PARA EL COMBO
     List<Map<String, String>> listaPacientes = new ArrayList<>();
-
-    // Configuración de tu BD
-    String url = "jdbc:mysql://localhost:3306/bd_serena?useSSL=false&serverTimezone=UTC";
-    String user = "root";
-    String pass = "Keylabd2603";
-
+    List<Cita> listaCitas = new ArrayList<>();
+    
     Connection con = null;
+    PreparedStatement st = null;
+    ResultSet rs = null;
+
     try {
         Class.forName("com.mysql.cj.jdbc.Driver");
-        con = DriverManager.getConnection(url, user, pass);
+        con = DriverManager.getConnection(URL, USER, PASS);
         
-        // Ahora busca tanto usuarios generales como empleados de empresas
+        // --- Cargar Pacientes ---
         String sql = "SELECT id_usuario, nombre FROM usuario WHERE tipo_usuario IN ('normal', 'empleado')";
-        PreparedStatement st = con.prepareStatement(sql);
-        ResultSet rs = st.executeQuery();
-
+        st = con.prepareStatement(sql);
+        rs = st.executeQuery();
         while (rs.next()) {
             Map<String, String> paciente = new HashMap<>();
             paciente.put("id", rs.getString("id_usuario"));
             paciente.put("nombre", rs.getString("nombre"));
             listaPacientes.add(paciente);
         }
-    } catch (Exception e) {
-        e.printStackTrace(); 
-    }
-    
-    List<Cita> listaCitas = new ArrayList<>();
-    Integer idPsicologoLogueado = (Integer) session.getAttribute("idPsicologo");
-
-    if (idPsicologoLogueado != null) {
-        try {
-            // CORRECCIÓN: Usamos 'fecha' en lugar de 'fecha_cita' 
-            // e 'id_usuario' en lugar de 'id_usuario_paciente'
+        
+        // --- Cargar Citas (Si es psicólogo) ---
+        Integer idPsicologoLogueado = (Integer) session.getAttribute("idPsicologo");
+        if (idPsicologoLogueado != null) {
             String sqlCitas = "SELECT c.id_cita, u.nombre, c.fecha, c.hora, c.modalidad " +
                               "FROM cita c JOIN usuario u ON c.id_usuario = u.id_usuario " +
                               "WHERE c.id_psicologo = ? AND c.estado = 'pendiente' " + 
                               "ORDER BY c.fecha ASC, c.hora ASC";
             
-            PreparedStatement stCita = con.prepareStatement(sqlCitas);
-            stCita.setInt(1, idPsicologoLogueado);
-            ResultSet rsCita = stCita.executeQuery();
-
-            listaCitas.clear(); 
-            while (rsCita.next()) {
+            // Reutilizamos el PreparedStatement para cerrar el anterior
+            st.close(); 
+            st = con.prepareStatement(sqlCitas);
+            st.setInt(1, idPsicologoLogueado);
+            rs.close();
+            rs = st.executeQuery();
+            
+            while (rs.next()) {
                 listaCitas.add(new Cita(
-                    rsCita.getInt("id_cita"),
-                    rsCita.getString("nombre"), // Este viene del JOIN con 'usuario'
-                    rsCita.getString("fecha"),  // Nombre correcto en tu BD
-                    rsCita.getString("hora"),   // Nombre correcto en tu BD
-                    rsCita.getString("modalidad")
+                    rs.getInt("id_cita"),
+                    rs.getString("nombre"),
+                    rs.getString("fecha"),
+                    rs.getString("hora"),
+                    rs.getString("modalidad")
                 ));
             }
-        } catch (Exception e) { 
-            e.printStackTrace(); 
         }
+    } catch (Exception e) {
+        e.printStackTrace();
+    } finally {
+        // MUY IMPORTANTE: Cerrar recursos para no saturar Railway
+        try { if (rs != null) rs.close(); } catch (SQLException e) {}
+        try { if (st != null) st.close(); } catch (SQLException e) {}
+        try { if (con != null) con.close(); } catch (SQLException e) {}
     }
 %>
 
