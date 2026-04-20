@@ -1,12 +1,12 @@
 # --- NetBeans / IDE ---
 nbproject/private/
 build/
-dist/
+dist/*
+!dist/Appserena.war
 target/
 .nb-gradle/
 
 # --- Configuración y Secretos ---
-# Aquí ignoramos archivos que podrían tener tu contraseña de BD
 *.properties
 *.xml
 *.env
