@@ -1,96 +1,173 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Login - Serena</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        /* BASE: Limpiamos todo */
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: linear-gradient(180deg, #4a7ab5 0%, #2d4e83 100%);
-        }
+<meta charset="UTF-8">
+<title>Login - App Serena</title>
+<style>
+body {
+margin: 0;
+height: 100vh;
+display: flex;
+justify-content: center;
+align-items: center;
+background: #e6e6e6;
+font-family: Arial, Helvetica, sans-serif;
+}
 
-        /* Contenedor que siempre se verá */
-        .main-container {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            box-sizing: border-box;
-        }
+        /* MARCO DEL TELEFONO */
+.phone-frame {
+width: 380px;
+height: 760px;
+background: black;
+border-radius: 50px;
+padding: 15px;
+box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+display: flex;
+justify-content: center;
+align-items: center;
+}
 
-        /* --- ESTILO PARA ESCRITORIO (FRAME DE TELÉFONO) --- */
-        @media (min-width: 768px) {
-            body { background: #f4f7f9; }
-            .phone-frame {
-                width: 380px;
-                height: 760px;
-                background: #1a1a1a;
-                border-radius: 50px;
-                padding: 15px;
-                box-shadow: 0 30px 60px rgba(0,0,0,0.3);
-            }
-            .phone {
-                width: 100%;
-                height: 100%;
-                border-radius: 40px;
-                background: linear-gradient(180deg, #4a7ab5 0%, #2d4e83 100%);
-                position: relative;
-                overflow: hidden;
-            }
-        }
+        /* PANTALLA */
+.phone {
+width: 340px;
+height: 680px;
+background: white;
+border-radius: 40px;
+position: relative;
+overflow: hidden;
+padding: 25px;
+box-sizing: border-box;
+}
 
-        /* --- ESTILO PARA MÓVIL --- */
-        @media (max-width: 767px) {
-            .phone-frame { width: 100%; height: 100%; }
-            .phone { width: 100%; height: 100%; }
-            .notch { display: none; }
-        }
+/* NOTCH */
+.notch {
+width: 120px;
+height: 25px;
+background: black;
+border-radius: 0 0 20px 20px;
+position: absolute;
+top: 0;
+left: 50%;
+transform: translateX(-50%);
+}
+        /* pantalla interna */
+.screen {
+height: 100%;
+display: flex;
+flex-direction: column;
+justify-content: center;
+}
 
-        /* Estilos de elementos */
-        .screen { width: 100%; display: flex; flex-direction: column; align-items: center; color: white; }
-        .logo-container img { width: 180px; margin: 20px 0; }
-        input { width: 90%; padding: 12px; margin: 10px 0; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); border-radius: 10px; color: white; text-align: center; }
-        .login-btn { width: 92%; padding: 15px; background: white; color: #2d4e83; border-radius: 20px; border: none; font-weight: bold; margin-top: 20px; }
-    </style>
+        /* titulo */
+.title {
+text-align: center;
+font-size: 26px;
+font-weight: bold;
+color: #4c6ef5;
+margin-bottom: 10px;
+}
+
+.subtitle {
+text-align: center;
+color: #777;
+margin-bottom: 40px;
+}
+
+        /* logo */
+.logo {
+display: flex;
+justify-content: center;
+margin-bottom: 15px;
+}
+
+.logo img {
+width: 100px;
+height: 100px;
+object-fit: contain;
+}
+
+        /* inputs */
+input {
+width: 100%;
+padding: 12px 16px;
+margin-bottom: 15px;
+border-radius: 12px;
+border: 1px solid #ddd;
+font-size: 14px;
+box-sizing: border-box;
+}
+
+        /* botones */
+button {
+width: 100%;
+padding: 12px;
+border: none;
+border-radius: 12px;
+font-size: 15px;
+cursor: pointer;
+}
+
+.login-btn {
+background: #4c6ef5;
+color: white;
+margin-bottom: 10px;
+}
+
+.register-btn {
+background: #eee;
+}
+
+        /* footer */
+.footer {
+text-align: center;
+font-size: 12px;
+color: #999;
+margin-top: 25px;
+}
+</style>
 </head>
+
 <body>
 
 <div class="phone-frame">
-    <div class="phone">
-        <div class="notch"></div>
-        <div class="screen">
-            <div class="welcome-text" style="margin-top: 60px;">
-                <span>Bienvenido a</span>
-                <h1 class="title" style="margin:0;">Serena</h1>
-            </div>
+    <div class="phone">
+        <div class="notch"></div>
+        <div class="screen">
+            <div class="logo">
+                <img src="imagenes/logoSerena.png" alt="Logo Serena">
+            </div>
 
-            <div class="logo-container">
-                <img src="imagenes/logo2.png" alt="Logo Serena">
-            </div>
+            <div class="title">Serena</div>
+            <div class="subtitle">Prevención del Burnout</div>
 
-            <div class="login-box" style="width: 100%; text-align: center;">
-                <form action="../loginServlet" method="post">
-                    <input type="email" name="correo" placeholder="correo@ejemplo.com" required>
-                    <input type="password" name="password" placeholder="contraseña" required>
-                    <button type="submit" class="login-btn">Ingresar</button>
-                </form>
-                
-                <button class="register-btn" style="margin-top:20px; cursor:pointer;" onclick="location.href='tipoCuenta.html'">
-                    ¿No tienes cuenta? <span>Regístrate</span>
-                </button>
-            </div>
-        </div>
-    </div>
+            <form action="../loginServlet" method="post">
+                <input type="email" name="correo" placeholder="Correo electrónico" required>
+                <input type="password" name="password" placeholder="Contraseña" required>
+                <button type="submit" class="login-btn">Ingresar</button>
+            </form>
+
+            <button class="register-btn" onclick="location.href='tipoCuenta.html'">Crear cuenta</button>
+
+            <div class="footer">
+                Tu bienestar es lo primordial
+            </div>
+        </div>
+    </div>
 </div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('error')) {
+        const error = urlParams.get('error');
+        if (error === 'incorrecto') {
+            alert("El correo o la contraseña son incorrectos.");
+        } else if (error === 'campos_vacios') {
+            alert("Por favor, llena todos los campos.");
+        } else if (error === 'error_servidor') {
+            alert("Hubo un problema en el servidor. Intenta más tarde.");
+        }
+    }
+</script>
 
 </body>
 </html>
