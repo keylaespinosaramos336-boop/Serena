@@ -6,6 +6,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
+        * { box-sizing: border-box; }
+
         body {
             margin: 0;
             min-height: 100vh;
@@ -15,50 +17,69 @@
             background: #f4f7f9;
             font-family: 'Plus Jakarta Sans', sans-serif;
         }
-        
-        /* Contenedor del marco */
-        .phone-frame {
-            position: relative;
-            background: #1a1a1a;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
 
-        /* En escritorio: marco físico */
+        /* ── ESCRITORIO: fondo gris + marco negro ── */
         @media (min-width: 768px) {
             .phone-frame {
+                position: relative;
+                background: #1a1a1a;
+                box-shadow: 0 30px 60px rgba(0,0,0,0.3);
                 width: 380px;
                 height: 760px;
                 border-radius: 50px;
                 padding: 15px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
             }
             .phone {
                 width: 340px;
                 height: 680px;
                 border-radius: 40px;
             }
+            .notch {
+                display: block;
+                width: 120px;
+                height: 25px;
+                background: #1a1a1a;
+                border-radius: 0 0 20px 20px;
+                position: absolute;
+                top: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 10;
+            }
         }
-        
-        /* En móvil: pantalla completa */
+
+        /* ── MÓVIL: igual que la pantalla interna, sin contorno ── */
         @media (max-width: 767px) {
-            body { background: linear-gradient(180deg, #4a7ab5 0%, #2d4e83 100%); }
+            body {
+                background: linear-gradient(180deg, #4a7ab5 0%, #2d4e83 100%);
+                align-items: center;
+                justify-content: center;
+            }
             .phone-frame {
-                width: 100vw;
-                height: 100vh;
-                border-radius: 0;
-                padding: 0;
+                /* mismo tamaño que el "telefonito" de escritorio */
+                width: 340px;
+                height: 680px;
+                border-radius: 40px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                /* sin fondo oscuro ni sombra */
+                background: transparent;
                 box-shadow: none;
+                padding: 0;
             }
             .phone {
-                width: 100vw;
-                height: 100vh;
-                border-radius: 0;
+                width: 340px;
+                height: 680px;
+                border-radius: 40px;
             }
             .notch { display: none; }
         }
 
+        /* ── PANTALLA INTERNA (igual en ambos casos) ── */
         .phone {
             background: linear-gradient(180deg, #4a7ab5 0%, #2d4e83 100%);
             position: relative;
@@ -66,18 +87,6 @@
             display: flex;
             flex-direction: column;
             color: white;
-        }
-
-        .notch {
-            width: 120px;
-            height: 25px;
-            background: #1a1a1a;
-            border-radius: 0 0 20px 20px;
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
         }
 
         .screen {
@@ -103,27 +112,69 @@
 
         .title { font-size: 42px; font-weight: 800; margin: 0; }
 
-        .logo-container { flex: 1.5; display: flex; align-items: center; justify-content: center; }
-        .logo-container img { width: 200px; height: auto; filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.5)); }
+        .logo-container {
+            flex: 1.5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo-container img {
+            width: 200px;
+            height: auto;
+            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.5));
+        }
 
         .login-box { width: 100%; margin-top: auto; }
 
         input {
-            width: 85%; margin: 0 auto 15px auto; display: block; text-align: center; padding: 12px;
-            background: transparent !important; border: none; border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-            font-size: 16px; color: white !important; outline: none;
+            width: 85%;
+            margin: 0 auto 15px auto;
+            display: block;
+            text-align: center;
+            padding: 12px;
+            background: transparent !important;
+            border: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            font-size: 16px;
+            color: white !important;
+            outline: none;
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
+        input::placeholder { color: rgba(255,255,255,0.6); }
 
         .login-btn {
-            width: 90%; padding: 16px; border: none; border-radius: 20px;
-            font-size: 16px; font-weight: 700; background: white; color: #2d4e83;
-            margin-top: 20px; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            width: 90%;
+            padding: 16px;
+            border: none;
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: 700;
+            background: white;
+            color: #2d4e83;
+            margin-top: 20px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
-        .register-btn { background: transparent; border: none; color: white; font-size: 15px; opacity: 0.8; cursor: pointer; margin-top: 15px; }
+        .register-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 15px;
+            opacity: 0.8;
+            cursor: pointer;
+            margin-top: 15px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
         .register-btn span { text-decoration: underline; font-weight: 700; }
 
-        .circle { position: absolute; background: rgba(255,255,255,0.06); border-radius: 50%; z-index: 1; }
+        .circle {
+            position: absolute;
+            background: rgba(255,255,255,0.06);
+            border-radius: 50%;
+            z-index: 1;
+        }
         .c1 { width: 250px; height: 250px; top: -50px; right: -80px; }
         .c2 { width: 180px; height: 180px; bottom: 150px; left: -50px; }
     </style>
@@ -152,7 +203,7 @@
                     <input type="password" name="password" placeholder="contraseña" required autocomplete="off">
                     <button type="submit" class="login-btn">Ingresar</button>
                 </form>
-                
+
                 <button class="register-btn" onclick="location.href='tipoCuenta.html'">
                     ¿No tienes cuenta? <span>Regístrate</span>
                 </button>
