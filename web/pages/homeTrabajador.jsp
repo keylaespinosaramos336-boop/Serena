@@ -64,18 +64,89 @@
 
 <style>
 
-body{
-margin:0;
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-background:#e6e6e6;
-font-family:'Plus Jakarta Sans', sans-serif;
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* ══════════════════════════════
+   ESCRITORIO: fondo gris + marco
+   ══════════════════════════════ */
+@media (min-width: 768px) {
+    body {
+        background: #e6e6e6;
+    }
+    .phone-frame {
+        width: 380px;
+        height: 760px;
+        background: black;
+        border-radius: 50px;
+        padding: 15px;
+        box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-shrink: 0;
+    }
+    .phone {
+        width: 340px;
+        height: 680px;
+        border-radius: 40px;
+        overflow: hidden;
+    }
+    .notch {
+        display: block;
+        width: 120px;
+        height: 25px;
+        background: black;
+        border-radius: 0 0 20px 20px;
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10;
+    }
+}
+
+/* ══════════════════════════════
+   MÓVIL: pantalla completa, sin marco
+   ══════════════════════════════ */
+@media (max-width: 767px) {
+    body {
+        background: linear-gradient(180deg, #6aa3d6, #3f6ba9);
+        align-items: stretch;
+        min-height: 100dvh;
+    }
+    .phone-frame {
+        width: 100%;
+        flex: 1;
+        display: flex;
+        background: transparent;
+        box-shadow: none;
+        padding: 0;
+        border-radius: 0;
+    }
+    .phone {
+        width: 100%;
+        min-height: 100dvh;
+        border-radius: 0;
+    }
+    .notch { display: none; }
+    .header-bg {
+        height: 220px !important;
+    }
+    .menu {
+        height: 65px !important;
+    }
 }
 
 /* MARCO DEL TELEFONO */
-
+/*
 .phone-frame{
 width:380px;
 height:760px;
@@ -86,20 +157,17 @@ box-shadow:0 30px 60px rgba(0,0,0,0.4);
 display:flex;
 justify-content:center;
 align-items:center;
-}
+}*/
 
 /* PANTALLA */
 
-.phone{
-width:340px;
-height:680px;
-background:linear-gradient(180deg,#6aa3d6,#3f6ba9);
-border-radius:40px;
-overflow:hidden;
-color:white;
-position:relative;
-display:flex;
-flex-direction:column;
+.phone {
+    background: linear-gradient(180deg, #6aa3d6, #3f6ba9);
+    border-radius: 40px;
+    color: white;
+    position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 /* NOTCH */
@@ -259,6 +327,7 @@ width:70px;
 height:70px;
 border-radius:14px;
 object-fit:cover;
+flex-shrink: 0;/*agregue esto para el telefono*/
 }
 
 .card-info h4{
@@ -308,7 +377,7 @@ transition:0.2s;
 
 .menu .active{
 background:rgba(255,255,255,0.25);
-box-shadow:rgb(76, 110, 245);
+/*box-shadow:rgb(76, 110, 245);*/
 transform:scale(1.05);
 font-weight:bold;
 }
