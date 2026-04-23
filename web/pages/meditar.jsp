@@ -9,19 +9,87 @@
 
 <style>
 
-body{
-margin:0;
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-background:#e6e6e6;
-font-family:Arial;
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
 }
+
+/* ══════════════════════════════
+   ESCRITORIO: fondo gris + marco
+   ══════════════════════════════ */
+@media (min-width: 768px) {
+    body { background: #e6e6e6; }
+
+    .phone-frame {
+        width: 380px;
+        height: 760px;
+        background: black;
+        border-radius: 50px;
+        padding: 15px;
+        box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-shrink: 0;
+    }
+    .phone {
+        width: 340px;
+        height: 680px;
+        border-radius: 40px;
+        overflow: hidden;
+    }
+    .notch {
+        display: block;
+        width: 120px;
+        height: 25px;
+        background: black;
+        border-radius: 0 0 20px 20px;
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 110;
+    }
+}
+
+/* ══════════════════════════════
+   MÓVIL: pantalla completa, sin marco
+   ══════════════════════════════ */
+@media (max-width: 767px) {
+    body {
+        background: linear-gradient(180deg, #6aa3d6, #3f6ba9);
+        align-items: stretch;
+        min-height: 100dvh;
+    }
+    .phone-frame {
+        width: 100%;
+        flex: 1;
+        display: flex;
+        background: transparent;
+        box-shadow: none;
+        padding: 0;
+        border-radius: 0;
+    }
+    .phone {
+        width: 100%;
+        height: 100dvh;
+        border-radius: 0;
+    }
+    .notch { display: none; }
+}
+
+/* ══════════════════════════════
+   PANTALLA INTERNA
+   ══════════════════════════════ */
 
 /* MARCO DEL TELEFONO */
 
-.phone-frame{
+/*.phone-frame{
 width:380px;
 height:760px;
 background:black;
@@ -31,18 +99,17 @@ box-shadow:0 30px 60px rgba(0,0,0,0.4);
 display:flex;
 justify-content:center;
 align-items:center;
-}
+}*/
 
 /* PANTALLA DEL TELEFONO */
 
 .phone{
-width:340px;
-height:680px;
-background:linear-gradient(180deg,#6aa3d6,#3f6ba9);
-border-radius:40px;
-overflow:hidden;
-color:white;
-position:relative;
+background: linear-gradient(180deg, #6aa3d6, #3f6ba9);
+    color: white;
+    position: relative;
+    /* Flex column: header + container(crece) + menu(fijo abajo) */
+    display: flex;
+    flex-direction: column;
 }
 
 /* NOTCH */
@@ -66,16 +133,20 @@ padding:40px 25px 25px 25px;
 text-align:center;
 font-size:22px;
 font-weight:bold;
+flex-shrink: 0;
 }
 
 /* CONTENEDOR */
 .container {
+    flex: 1;
     background: rgba(0,0,0,0.25);
     border-radius: 30px 30px 0 0;
-    padding: 20px;
-    height: 500px;
+    padding: 20px 20px 20px 20px;
+    /*height: 500px;*/
     overflow-y: auto;
-    
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    min-height: 0; /* necesario para que flex+overflow funcionen */
     /* Ocultar scrollbar para Chrome, Safari y Opera */
     -webkit-overflow-scrolling: touch; /* Mejora el scroll en móviles */
 }
@@ -86,14 +157,14 @@ font-weight:bold;
 }
 
 /* Regla para Firefox */
-.container {
+/*.container {
     scrollbar-width: none;
 }
 
 /* Regla para Internet Explorer y Edge antiguo */
-.container {
+/*.container {
     -ms-overflow-style: none;
-}
+}*/
 
 /* grid */
 
@@ -106,7 +177,7 @@ gap:15px;
 /* tarjetas */
 
 .card{
-height:140px;
+height:200px;
 border-radius:18px;
 background-size:cover;
 background-position:center;
@@ -223,11 +294,15 @@ font-size:13px;
     /*cursor: pointer;*/
 }
 
-/* MENU INFERIOR */
+/* ══════════════════════════════
+   MENÚ — parte del flujo flex,
+   siempre visible al fondo
+   ══════════════════════════════ */
 
 .menu{
-position:absolute;
-bottom:0;
+    flex-shrink: 0;
+/*position:absolute;
+bottom:0*/;
 width:100%;
 height:70px;
 background:rgba(0, 0, 0, 0.504);
@@ -245,14 +320,14 @@ padding:8px 10px;
 border-radius:12px;
 transition:0.2s;
 color: white; 
-text-decoration: none;
+/*text-decoration: none;*/
 }
 
 /* BOTON ACTIVO */
 
 .menu .active{
 background:rgba(255,255,255,0.25);
-box-shadow:rgb(76, 110, 245);
+/*box-shadow:rgb(76, 110, 245);*/
 transform:scale(1.05);
 font-weight:bold;
 }

@@ -14,10 +14,9 @@
     String primerNombre = (nombreCompleto != null && !nombreCompleto.trim().isEmpty()) 
                           ? nombreCompleto.trim().split(" ")[0] : "Usuario";
 
-    // 3. Estructura para guardar datos de progreso (Carga antes, dibuja después)
+    // 3. Estructura para guardar datos de progreso
     List<Map<String, String>> listaProgreso = new ArrayList<>();
 
-    // Variables de entorno para Railway (si no están, usa local por defecto)
     String URL = System.getenv().getOrDefault("DB_URL", "jdbc:mysql://roundhouse.proxy.rlwy.net:45224/railway?useSSL=false&serverTimezone=UTC");
     String USER = System.getenv().getOrDefault("DB_USER", "root");
     String PASS = System.getenv().getOrDefault("DB_PASS", "vYBluCJLeLEqOKtswQfDAzlRkyxRVAKF");
@@ -47,7 +46,6 @@
     } catch (Exception e) {
         e.printStackTrace();
     } finally {
-        // Cierre inmediato de recursos: vital para que Railway no te bloquee
         if (rs != null) try { rs.close(); } catch (SQLException e) {}
         if (ps != null) try { ps.close(); } catch (SQLException e) {}
         if (con != null) try { con.close(); } catch (SQLException e) {}
@@ -59,11 +57,10 @@
 <head>
 <meta charset="UTF-8">
 <title>Inicio - Serena</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <style>
-
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
@@ -78,9 +75,8 @@ body {
    ESCRITORIO: fondo gris + marco
    ══════════════════════════════ */
 @media (min-width: 768px) {
-    body {
-        background: #e6e6e6;
-    }
+    body { background: #e6e6e6; }
+
     .phone-frame {
         width: 380px;
         height: 760px;
@@ -109,7 +105,7 @@ body {
         top: 0;
         left: 50%;
         transform: translateX(-50%);
-        z-index: 10;
+        z-index: 110;
     }
 }
 
@@ -133,183 +129,138 @@ body {
     }
     .phone {
         width: 100%;
-        min-height: 100dvh;
+        height: 100dvh;
         border-radius: 0;
     }
     .notch { display: none; }
-    .header-bg {
-        height: 220px !important;
-    }
-    .menu {
-        height: 65px !important;
-    }
 }
 
-/* MARCO DEL TELEFONO */
-/*
-.phone-frame{
-width:380px;
-height:760px;
-background:black;
-border-radius:50px;
-padding:15px;
-box-shadow:0 30px 60px rgba(0,0,0,0.4);
-display:flex;
-justify-content:center;
-align-items:center;
-}*/
-
-/* PANTALLA */
-
+/* ══════════════════════════════
+   PANTALLA INTERNA
+   ══════════════════════════════ */
 .phone {
     background: linear-gradient(180deg, #6aa3d6, #3f6ba9);
-    border-radius: 40px;
     color: white;
     position: relative;
     display: flex;
     flex-direction: column;
 }
 
-/* NOTCH */
-
-.notch{
-width:120px;
-height:25px;
-background:black;
-border-radius:0 0 20px 20px;
-position:absolute;
-top:0;
-left:50%;
-transform:translateX(-50%);
-z-index:10;
+.notch {
+    width: 120px;
+    height: 25px;
+    background: black;
+    border-radius: 0 0 20px 20px;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 110;
 }
 
-/* HEADER CON IMAGEN */
-
-.header-bg{
-height:200px;
-background:url('https://images.unsplash.com/photo-1704466211402-d6a869c55a29?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') center/cover;
-position:relative;
-display:flex;
-flex-direction:column;
-justify-content:flex-end;
-padding:20px;
+/* HEADER: tamaño fijo */
+.header-bg {
+    height: 200px;
+    background: url('https://images.unsplash.com/photo-1704466211402-d6a869c55a29?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') center/cover;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 20px;
+    /*flex-shrink: 0;*/
 }
 
-.header-bg::before{
-content:'';
-position:absolute;
-inset:0;
-background:linear-gradient(0deg,rgba(0,0,0,0.4),transparent);
+.header-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, rgba(0,0,0,0.4), transparent);
 }
 
-.greeting{
-position:relative;
-z-index:1;
+.greeting {
+    position: relative;
+    z-index: 1;
 }
 
-.greeting h1{
-margin:0;
-font-size:18px;
-font-weight:700;
-}
+.greeting h1 { margin: 0; font-size: 18px; font-weight: 700; }
+.greeting p  { margin: 5px 0 0; font-size: 13px; opacity: 0.9; }
 
-.greeting p{
-margin:5px 0 0;
-font-size:13px;
-opacity:0.9;
-}
-
-/* CONTENIDO */
+/* CONTENIDO: ocupa espacio restante y hace scroll */
 .content {
     flex: 1;
+    min-height: 0; /* clave para que flex + overflow funcionen */
     background: rgba(0,0,0,0.25);
-    border-radius: 30px 30px 0 0;
+    /*border-radius: 30px 30px 0 0;*/
     padding: 20px;
-    padding-bottom: 100px; /* Espacio extra para que la última tarjeta suba */
     overflow-y: auto;
-    
-    /* OCULTAR SCROLLBAR */
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE/Edge */
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 
-/* Ocultar scrollbar para Chrome/Safari */
-.content::-webkit-scrollbar {
-    display: none;
+.content::-webkit-scrollbar { display: none; }
+
+.section-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 12px;
 }
 
-/* TITULO SECCION */
-
-.section-title{
-font-size:15px;
-font-weight:700;
-margin-bottom:12px;
+.mood-bar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 25px;
 }
 
-/* ESTADO EMOCIONAL */
-
-.mood-bar{
-display:flex;
-justify-content:space-between;
-margin-bottom:25px;
+.mood-btn {
+    font-size: 20px;
+    background: rgba(255,255,255,0.2);
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.2s;
 }
 
-.mood-btn{
-font-size:20px;
-background:rgba(255,255,255,0.2);
-width:45px;
-height:45px;
-display:flex;
-align-items:center;
-justify-content:center;
-border-radius:12px;
-cursor:pointer;
-transition:0.2s;
+.mood-btn:hover {
+    background: rgba(255,255,255,0.35);
+    transform: scale(1.1);
 }
 
-.mood-btn:hover{
-background:rgba(255,255,255,0.35);
-transform:scale(1.1);
+.quick-nav {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 25px;
 }
 
-/* ACCESOS RAPIDOS (SIN SCROLL) */
-
-.quick-nav{
-display:flex;
-justify-content:space-between;
-margin-bottom:25px;
+.circle-item {
+    width: 60px;
+    text-align: center;
 }
 
-.circle-item{
-width:60px;
-text-align:center;
+.circle {
+    width: 50px;
+    height: 50px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    margin: 0 auto 6px;
+    transition: 0.2s;
+    cursor: pointer;
 }
 
-.circle{
-width:50px;
-height:50px;
-background:rgba(255,255,255,0.2);
-border-radius:50%;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:18px;
-margin:0 auto 6px;
-transition:0.2s;
-cursor:pointer;
+.circle:hover {
+    background: rgba(255,255,255,0.35);
+    transform: scale(1.05);
 }
 
-.circle:hover{
-background:rgba(255,255,255,0.35);
-transform:scale(1.05);
-}
-
-.circle-item span{
-font-size:11px;
-}
-
-/* TARJETA */
+.circle-item span { font-size: 11px; }
 
 .card-featured {
     background: white;
@@ -319,27 +270,19 @@ font-size:11px;
     display: flex;
     align-items: center;
     gap: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Un poco de sombra para resaltar */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
-.card-img{
-width:70px;
-height:70px;
-border-radius:14px;
-object-fit:cover;
-flex-shrink: 0;/*agregue esto para el telefono*/
+.card-img {
+    width: 70px;
+    height: 70px;
+    border-radius: 14px;
+    object-fit: cover;
+    flex-shrink: 0;
 }
 
-.card-info h4{
-margin:0;
-font-size:14px;
-}
-
-.card-info p{
-margin:4px 0;
-font-size:12px;
-color:#666;
-}
+.card-info h4 { margin: 0; font-size: 14px; }
+.card-info p  { margin: 4px 0; font-size: 12px; color: #666; }
 
 .card-play {
     font-size: 12px;
@@ -351,39 +294,32 @@ color:#666;
     gap: 4px;
 }
 
-/* MENU INFERIOR */
-
-.menu{
-position:absolute;
-bottom:0;
-width:100%;
-height:70px;
-background:rgba(0, 0, 0, 0.504);
-display:flex;
-justify-content:space-around;
-align-items:center;
-font-size:12px;
+/* MENÚ: flex item fijo al fondo, nunca se comprime */
+.menu {
+    flex-shrink: 0;
+    width: 100%;
+    height: 70px;
+    background: rgba(0,0,0,0.504);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    font-size: 12px;
+    z-index: 50;
 }
 
-.menu div{
-text-align:center;
-cursor:pointer;
-padding:8px 10px;
-border-radius:12px;
-transition:0.2s;
+.menu div {
+    text-align: center;
+    cursor: pointer;
+    padding: 8px 10px;
+    border-radius: 12px;
+    transition: 0.2s;
+    color: white;
 }
 
-/* BOTON ACTIVO */
-
-.menu .active{
-background:rgba(255,255,255,0.25);
-/*box-shadow:rgb(76, 110, 245);*/
-transform:scale(1.05);
-font-weight:bold;
-}
-
-html {
-    scroll-behavior: smooth;
+.menu .active {
+    background: rgba(255,255,255,0.25);
+    transform: scale(1.05);
+    font-weight: bold;
 }
 
 #lista-progreso {
@@ -391,94 +327,88 @@ html {
     flex-direction: column;
     gap: 12px;
 }
-
 </style>
 </head>
 
 <body>
 
 <div class="phone-frame">
-
 <div class="phone">
 
 <div class="notch"></div>
 
+<!-- HEADER FIJO -->
 <div class="header-bg">
-<div class="greeting">
-<%-- AQUÍ SE AGREGA LA VARIABLE CON EL NOMBRE --%>
-<h1>Buenos días, <%= primerNombre %></h1>
-<p>"Hoy es un buen día para cuidar tu bienestar."</p>
-</div>
+    <div class="greeting">
+        <h1>Buenos días, <%= primerNombre %></h1>
+        <p>"Hoy es un buen día para cuidar tu bienestar."</p>
+    </div>
 </div>
 
+<!-- CONTENIDO QUE HACE SCROLL -->
 <div class="content">
 
-<div class="section-title">¿Cómo te sientes?</div>
-
-<div class="mood-bar">
-<div class="mood-btn" onclick="registrarAnimo(0)">😢</div>
-<div class="mood-btn" onclick="registrarAnimo(25)">😕</div>
-<div class="mood-btn" onclick="registrarAnimo(50)">😊</div>
-<div class="mood-btn" onclick="registrarAnimo(75)">😁</div>
-<div class="mood-btn" onclick="registrarAnimo(100)">😌</div>
-</div>
-
-<div class="section-title">Accesos rápidos</div>
-<div class="quick-nav">
-    <div class="circle-item" onclick="location.href='audios.jsp'">
-        <div class="circle">🎧</div>
-        <span>Audios</span>
+    <div class="section-title">¿Cómo te sientes?</div>
+    <div class="mood-bar">
+        <div class="mood-btn" onclick="registrarAnimo(0)">😢</div>
+        <div class="mood-btn" onclick="registrarAnimo(25)">😕</div>
+        <div class="mood-btn" onclick="registrarAnimo(50)">😊</div>
+        <div class="mood-btn" onclick="registrarAnimo(75)">😁</div>
+        <div class="mood-btn" onclick="registrarAnimo(100)">😌</div>
     </div>
 
-    <div class="circle-item" onclick="location.href='meditar.jsp'">
-        <div class="circle">🧘</div>
-        <span>Pausas</span>
+    <div class="section-title">Accesos rápidos</div>
+    <div class="quick-nav">
+        <div class="circle-item" onclick="location.href='audios.jsp'">
+            <div class="circle">🎧</div>
+            <span>Audios</span>
+        </div>
+        <div class="circle-item" onclick="location.href='meditar.jsp'">
+            <div class="circle">🧘</div>
+            <span>Pausas</span>
+        </div>
+        <div class="circle-item" onclick="location.href='perfil.jsp#seccionNiveles'">
+            <div class="circle">💡</div>
+            <span>Consejos</span>
+        </div>
+        <div class="circle-item" onclick="location.href='perfil.jsp#seccionGrafica'">
+            <div class="circle">📈</div>
+            <span>Progreso</span>
+        </div>
     </div>
 
-    <div class="circle-item" onclick="location.href='perfil.jsp#seccionNiveles'">
-        <div class="circle">💡</div>
-        <span>Consejos</span>
-    </div>
-
-    <div class="circle-item" onclick="location.href='perfil.jsp#seccionGrafica'">
-        <div class="circle">📈</div>
-        <span>Progreso</span>
-    </div> </div>
-
-<div class="section-title">Tu progreso hoy</div>
-
-<div id="lista-progreso">
-                    <% if (listaProgreso.isEmpty()) { %>
-                        <div style="text-align:center; padding: 20px; opacity: 0.6; font-size: 13px;">
-                            <p>Aún no has escuchado nada hoy.<br>¡Comienza una sesión ahora!</p>
+    <div class="section-title">Tu progreso hoy</div>
+    <div id="lista-progreso">
+        <% if (listaProgreso.isEmpty()) { %>
+            <div style="text-align:center; padding: 20px; opacity: 0.6; font-size: 13px;">
+                <p>Aún no has escuchado nada hoy.<br>¡Comienza una sesión ahora!</p>
+            </div>
+        <% } else {
+            for (Map<String, String> item : listaProgreso) { %>
+                <div class="card-featured">
+                    <img src="<%= item.get("imagen") %>" class="card-img" onerror="this.src='https://via.placeholder.com/150?text=Audio'">
+                    <div class="card-info">
+                        <h4><%= item.get("titulo") %></h4>
+                        <p>Progreso: <%= item.get("tiempo") %></p>
+                        <div class="card-play" onclick="continuarSesion('<%= item.get("titulo") %>', '<%= item.get("tiempo") %>')">
+                            ▶ Continuar sesión
                         </div>
-                    <% } else {
-                        for (Map<String, String> item : listaProgreso) { %>
-                            <div class="card-featured">
-                                <img src="<%= item.get("imagen") %>" class="card-img" onerror="this.src='https://via.placeholder.com/150?text=Audio'">
-                                <div class="card-info">
-                                    <h4><%= item.get("titulo") %></h4>
-                                    <p>Progreso: <%= item.get("tiempo") %></p>
-                                    <div class="card-play" onclick="continuarSesion('<%= item.get("titulo") %>', '<%= item.get("tiempo") %>')">
-                                        ▶ Continuar sesión
-                                    </div>
-                                </div>
-                            </div>
-                    <% } } %>
+                    </div>
                 </div>
-
-
+        <% } } %>
+    </div>
 
 </div>
+
+<!-- MENÚ FIJO ABAJO (flex item, no absolute) -->
 <div class="menu">
-
-<div class="active">🏠<br>Inicio</div>
-<div onclick="location.href='sueno.jsp';">🌙<br>Sueño</div>
-<div onclick="location.href='meditar.jsp';">🧘<br>Meditar</div>
-<div onclick="location.href='audios.jsp';">🎧<br>Audios</div>
-<div onclick="location.href='${pageContext.request.contextPath}/ListarPsicologosServlet';">💬<br>Chat</div>
-<div onclick="location.href='perfil.jsp';">👤<br>Perfil</div>
-
+    <div class="active">🏠<br>Inicio</div>
+    <div onclick="location.href='sueno.jsp';">🌙<br>Sueño</div>
+    <div onclick="location.href='meditar.jsp';">🧘<br>Meditar</div>
+    <div onclick="location.href='audios.jsp';">🎧<br>Audios</div>
+    <div onclick="location.href='${pageContext.request.contextPath}/ListarPsicologosServlet';">💬<br>Chat</div>
+    <div onclick="location.href='perfil.jsp';">👤<br>Perfil</div>
+</div>
 
 </div>
 </div>
@@ -496,20 +426,15 @@ function registrarAnimo(valor) {
 }
 
 function continuarSesion(titulo, tiempo) {
-    let destino = "audios.jsp"; // Por defecto
-    // Convertimos a minúsculas para comparar fácilmente
+    let destino = "audios.jsp";
     const t = titulo.toLowerCase();
-    // Lógica de detección por palabras clave
     if (t.includes("olas") || t.includes("lluvia") || t.includes("dormir") || t.includes("bosque") || t.includes("relajante") || t.includes("afirmaciones")) {
         destino = "sueno.jsp";
     } else if (t.includes("estiramiento") || t.includes("respiración") || t.includes("visual") || t.includes("relajación") || t.includes("meditación") || t.includes("movilidad")) {
         destino = "meditar.jsp";
     }
-    console.log("Redirigiendo a: " + destino + " con el título: " + titulo);
-    // Redirigimos pasando los parámetros
     window.location.href = destino + "?titulo=" + encodeURIComponent(titulo) + "&tiempo=" + tiempo;
 }
-
 </script>
 
 </body>
