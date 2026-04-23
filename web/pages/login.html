@@ -6,20 +6,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            margin: 0;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            background: #f4f7f9;
             font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
-        /* ── ESCRITORIO: fondo gris + marco negro ── */
+        /* ══════════════════════════════
+           ESCRITORIO: fondo gris + marco
+           ══════════════════════════════ */
         @media (min-width: 768px) {
+            body {
+                background: #f4f7f9;
+            }
             .phone-frame {
                 position: relative;
                 background: #1a1a1a;
@@ -31,11 +34,13 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                flex-shrink: 0;
             }
             .phone {
                 width: 340px;
                 height: 680px;
                 border-radius: 40px;
+                overflow: hidden;
             }
             .notch {
                 display: block;
@@ -51,39 +56,38 @@
             }
         }
 
-        /* ── MÓVIL: igual que la pantalla interna, sin contorno ── */
+        /* ══════════════════════════════
+           MOVIL: pantalla completa, sin marco
+           ══════════════════════════════ */
         @media (max-width: 767px) {
             body {
                 background: linear-gradient(180deg, #4a7ab5 0%, #2d4e83 100%);
-                align-items: center;
-                justify-content: center;
+                align-items: stretch;
+                min-height: 100dvh;
             }
             .phone-frame {
-                /* mismo tamaño que el "telefonito" de escritorio */
-                width: 340px;
-                height: 680px;
-                border-radius: 40px;
+                width: 100%;
+                flex: 1;
                 display: flex;
-                justify-content: center;
-                align-items: center;
-                /* sin fondo oscuro ni sombra */
-                background: transparent;
-                box-shadow: none;
-                padding: 0;
             }
             .phone {
-                width: 340px;
-                height: 680px;
-                border-radius: 40px;
+                width: 100%;
+                min-height: 100dvh;
+                border-radius: 0;
             }
             .notch { display: none; }
+            .screen {
+                padding: 60px 30px 40px !important;
+                margin-top: 0 !important;
+            }
         }
 
-        /* ── PANTALLA INTERNA (igual en ambos casos) ── */
+        /* ══════════════════════════════
+           PANTALLA INTERNA
+           ══════════════════════════════ */
         .phone {
             background: linear-gradient(180deg, #4a7ab5 0%, #2d4e83 100%);
             position: relative;
-            overflow: hidden;
             display: flex;
             flex-direction: column;
             color: white;
@@ -110,7 +114,11 @@
             margin-bottom: 4px;
         }
 
-        .title { font-size: 42px; font-weight: 800; margin: 0; }
+        .title {
+            font-size: 42px;
+            font-weight: 800;
+            margin: 0;
+        }
 
         .logo-container {
             flex: 1.5;
@@ -118,13 +126,17 @@
             align-items: center;
             justify-content: center;
         }
+
         .logo-container img {
             width: 200px;
             height: auto;
             filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.5));
         }
 
-        .login-box { width: 100%; margin-top: auto; }
+        .login-box {
+            width: 100%;
+            margin-top: auto;
+        }
 
         input {
             width: 85%;
@@ -155,6 +167,9 @@
             cursor: pointer;
             box-shadow: 0 10px 25px rgba(0,0,0,0.15);
             font-family: 'Plus Jakarta Sans', sans-serif;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .register-btn {
@@ -166,14 +181,22 @@
             cursor: pointer;
             margin-top: 15px;
             font-family: 'Plus Jakarta Sans', sans-serif;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 10px;
         }
-        .register-btn span { text-decoration: underline; font-weight: 700; }
+        .register-btn span {
+            text-decoration: underline;
+            font-weight: 700;
+        }
 
         .circle {
             position: absolute;
             background: rgba(255,255,255,0.06);
             border-radius: 50%;
             z-index: 1;
+            pointer-events: none;
         }
         .c1 { width: 250px; height: 250px; top: -50px; right: -80px; }
         .c2 { width: 180px; height: 180px; bottom: 150px; left: -50px; }
@@ -200,12 +223,12 @@
             <div class="login-box">
                 <form action="../loginServlet" method="post">
                     <input type="email" name="correo" placeholder="correo@ejemplo.com" required autocomplete="off">
-                    <input type="password" name="password" placeholder="contraseña" required autocomplete="off">
+                    <input type="password" name="password" placeholder="contrasena" required autocomplete="off">
                     <button type="submit" class="login-btn">Ingresar</button>
                 </form>
 
                 <button class="register-btn" onclick="location.href='tipoCuenta.html'">
-                    ¿No tienes cuenta? <span>Regístrate</span>
+                    No tienes cuenta? <span>Registrate</span>
                 </button>
             </div>
         </div>
