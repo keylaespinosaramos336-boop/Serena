@@ -33,18 +33,10 @@ public class ListarPsicologosServlet extends HttpServlet {
     private final String DB_USER = System.getenv().getOrDefault("DB_USER", "root");
     private final String DB_PASS = System.getenv().getOrDefault("DB_PASS", "vYBluCJLeLEqOKtswQfDAzlRkyxRVAKF");
 
-    // ── Gemini ────────────────────────────────────────────────
-    // FIX 3: modelo correcto actualizado (gemini-1.5-flash es el nombre estable)
-    // CAMBIA ESTA LÍNEA POR ESTA:
-    private static final String API_KEY = System.getenv("GEMINI_API_KEY");
-    // Cambia tu constante a esta:
-    private static final String GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=";
-
+    // MODELO ESTABLE
+    private static final String GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=";
     private static final String FOTO_DEFAULT = "https://img.icons8.com/3d-sugary/100/generic-user.png";
 
-    // ══════════════════════════════════════════════════════════
-    //  GET: carga psicólogos + chats activos → chatTrabajador.jsp
-    // ══════════════════════════════════════════════════════════
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -60,7 +52,6 @@ public class ListarPsicologosServlet extends HttpServlet {
                 Class.forName("com.mysql.cj.jdbc.Driver");
                 try (Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS)) {
 
-                    // 1. Cargar todos los psicólogos
                     String sqlPsico =
                         "SELECT u.id_usuario, u.nombre, u.foto, " +
                         "       p.cedula, p.especialidad, p.experiencia, p.modalidad " +
@@ -81,8 +72,6 @@ public class ListarPsicologosServlet extends HttpServlet {
                         }
                     }
 
-                    // 2. Cargar chats activos del trabajador
-                    // FIX 2: incluimos cp.id_chat directamente para pasarlo al JSP
                     String sqlChats =
                         "SELECT cp.id_chat, " +
                         "       u2.id_usuario, u2.nombre, u2.foto, " +
@@ -101,11 +90,11 @@ public class ListarPsicologosServlet extends HttpServlet {
                             while (rs2.next()) {
                                 String ultMsg = rs2.getString("ultimo_mensaje");
                                 misChats.add(new ChatLista(
-                                    rs2.getInt("id_usuario"),       // id_usuario del psicólogo
+                                    rs2.getInt("id_usuario"),
                                     rs2.getString("nombre"),
                                     procesarFoto(rs2.getString("foto")),
                                     ultMsg != null ? ultMsg : "Conversacion iniciada",
-                                    rs2.getInt("id_chat")           // id_chat real de la BD
+                                    rs2.getInt("id_chat")
                                 ));
                             }
                         }
@@ -121,9 +110,6 @@ public class ListarPsicologosServlet extends HttpServlet {
         request.getRequestDispatcher("pages/chat.jsp").forward(request, response);
     }
 
-    // ══════════════════════════════════════════════════════════
-    //  POST: respuesta de la IA Gemini
-    // ══════════════════════════════════════════════════════════
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -132,6 +118,13 @@ public class ListarPsicologosServlet extends HttpServlet {
         response.setContentType("text/plain;charset=UTF-8");
         PrintWriter out = response.getWriter();
 
+        // LECTURA DINÁMICA DE LA LLAVE
+        String apiKey = System.getenv("GEMINI_API_KEY");
+        if (apiKey == null || apiKey.isEmpty()) {
+            out.print("Error: API_KEY no configurada en el servidor.");
+            return;
+        }
+
         String userMessage = request.getParameter("mensaje");
         if (userMessage == null || userMessage.trim().isEmpty()) {
             out.print("Hola, soy Serena. ¿En qué puedo apoyarte?");
@@ -139,9 +132,7 @@ public class ListarPsicologosServlet extends HttpServlet {
         }
 
         try {
-            // FIX 3: URL correcta con la API key como query param
-            String fullUrl = GEMINI_URL + API_KEY;
-            URL url = new URL(fullUrl);
+            URL url = new URL(GEMINI_URL + apiKey);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
@@ -149,39 +140,22 @@ public class ListarPsicologosServlet extends HttpServlet {
             conn.setReadTimeout(15000);
             conn.setDoOutput(true);
 
-            // Prompt con instrucciones de comportamiento
-            String reglasSerena =
-                "Eres Serena, asistente de bienestar mental. " +
-                "Responde de forma BREVE (maximo 30 palabras), empatica y en espanol. " +
-                "No uses markdown ni asteriscos. Solo texto plano.";
-            String cleanMsg   = userMessage.replace("\\", "\\\\")
-                                           .replace("\"", "'")
-                                           .replace("\n", " ")
-                                           .replace("\r", " ");
+            String reglasSerena = "Eres Serena, asistente de bienestar mental. Responde de forma BREVE (maximo 30 palabras), empatica y en espanol. No uses markdown ni asteriscos. Solo texto plano.";
+            String cleanMsg = userMessage.replace("\\", "\\\\").replace("\"", "'").replace("\n", " ").replace("\r", " ");
             String promptFinal = reglasSerena + " El usuario dice: " + cleanMsg;
 
-            // FIX 3: JSON con system instruction separado para mejor comportamiento
-            String jsonBody =
-                "{\"contents\":[{\"parts\":[{\"text\":\"" + promptFinal + "\"}]}]," +
-                "\"generationConfig\":{\"maxOutputTokens\":80,\"temperature\":0.7}}";
+            String jsonBody = "{\"contents\":[{\"parts\":[{\"text\":\"" + promptFinal + "\"}]}]," +
+                              "\"generationConfig\":{\"maxOutputTokens\":80,\"temperature\":0.7}}";
 
             try (OutputStream os = conn.getOutputStream()) {
                 os.write(jsonBody.getBytes("utf-8"));
             }
 
             int status = conn.getResponseCode();
-
-            // FIX 3: leer tanto éxito como error
-            InputStream is = null;
-            try {
-                is = (status < 400) ? conn.getInputStream() : conn.getErrorStream();
-            } catch (Exception eStream) {
-                out.print("Lo siento, no pude conectarme. ¿Intentamos de nuevo?");
-                return;
-            }
+            InputStream is = (status < 400) ? conn.getInputStream() : conn.getErrorStream();
 
             if (is == null) {
-                out.print("Lo siento, la respuesta estuvo vacía. ¿Puedes repetir?");
+                out.print("Error de conexión con Serena.");
                 return;
             }
 
@@ -193,63 +167,37 @@ public class ListarPsicologosServlet extends HttpServlet {
                 }
             }
 
-            String fullResponse = apiResponse.toString();
-
             if (status >= 400) {
-                System.err.println("[Gemini ERROR " + status + "] " + fullResponse);
-                out.print("Lo siento, estoy teniendo un problema técnico. ¿Podemos intentarlo de nuevo?");
+                out.print("Error (" + status + "): " + apiResponse.toString());
                 return;
             }
 
-            // Parseo manual: buscar "text": "..."
-            String aiText = "Estoy aquí para escucharte. ¿Cómo te sientes?";
+            String fullResponse = apiResponse.toString();
+            String aiText = "Estoy aquí para escucharte.";
             String marker = "\"text\":\"";
             int idx = fullResponse.lastIndexOf(marker);
+            
             if (idx >= 0) {
                 int start = idx + marker.length();
-                // Buscar cierre de comilla no escapada
                 int end = start;
                 while (end < fullResponse.length()) {
                     char c = fullResponse.charAt(end);
                     if (c == '"' && fullResponse.charAt(end - 1) != '\\') break;
                     end++;
                 }
-                if (end > start) {
-                    aiText = fullResponse.substring(start, end);
-                    // Limpiar escapes
-                    aiText = aiText.replace("\\n",  " ")
-                                   .replace("\\\"", "\"")
-                                   .replace("\\\\", "\\")
-                                   .replace("\\u00a1","¡").replace("\\u00bf","¿")
-                                   .replace("\\u00f1","ñ").replace("\\u00e1","á")
-                                   .replace("\\u00e9","é").replace("\\u00ed","í")
-                                   .replace("\\u00f3","ó").replace("\\u00fa","ú")
-                                   .replace("\\u00c1","Á").replace("\\u00c9","É")
-                                   .replace("\\u00cd","Í").replace("\\u00d3","Ó")
-                                   .replace("\\u00da","Ú").replace("\\u00d1","Ñ")
-                                   .replace("\\*","").replace("**","").replace("*","");
-                }
+                aiText = fullResponse.substring(start, end)
+                         .replace("\\n", " ").replace("\\\"", "\"").replace("\\\\", "\\");
             }
-
             out.print(aiText);
 
-        } catch (java.net.SocketTimeoutException te) {
-            out.print("La respuesta tardó demasiado. ¿Lo intentamos de nuevo?");
         } catch (Exception e) {
-            e.printStackTrace();
-            out.print("Ocurrió un error inesperado. Por favor intenta de nuevo.");
+            out.print("Error inesperado: " + e.getMessage());
         }
     }
 
-    // ── Helper: foto siempre con valor ─────────────────────────
     private String procesarFoto(String foto) {
-        if (foto == null || foto.trim().isEmpty()) {
-            return FOTO_DEFAULT;
-        }
-        if (foto.startsWith("http") || foto.startsWith("data:")) {
-            return foto;
-        }
-        // Base64 puro de BD
+        if (foto == null || foto.trim().isEmpty()) return FOTO_DEFAULT;
+        if (foto.startsWith("http") || foto.startsWith("data:")) return foto;
         return "data:image/jpeg;base64," + foto;
     }
 }
