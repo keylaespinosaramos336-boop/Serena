@@ -131,7 +131,7 @@ public class loginServlet extends HttpServlet {
                             session.setAttribute("nombreEmpresa", rsE.getString("nombre"));
                             session.setAttribute("tipoUsuario", "empresa");
                             
-                            response.sendRedirect("pages/perfilEmpresa.html"); // Cambiado a .jsp por consistencia
+                            response.sendRedirect("pages/homeEmpresa.jsp"); // Cambiado a .jsp por consistencia
                             return;
                         }
                     }

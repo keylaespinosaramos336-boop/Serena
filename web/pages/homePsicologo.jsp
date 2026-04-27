@@ -451,8 +451,17 @@
                                             <span style="font-size: 10px; color: #add8e6;"><%= cita.getModalidad().toUpperCase() %></span>
                                         </span>
                                         <div class="appointment-actions">
-                                            <button type="button" style="background: rgba(255,0,0);">Cancelar</button>
-                                            <button type="button">Reagendar</button>
+                                            <form action="../GuardarCitaServlet" method="POST" style="display:inline;">
+                                                <input type="hidden" name="accion" value="eliminar">
+                                                <input type="hidden" name="id_cita" value="<%= cita.getIdCita() %>">
+                                                <button type="submit" style="background: rgba(255,0,0,0.6); border:none; color:white; padding:4px 8px; border-radius:8px; cursor:pointer;">Cancelar</button>
+                                            </form>
+
+                                            <button type="button" 
+                                                    onclick="abrirReagendar('<%= cita.getIdCita() %>', '<%= cita.getFecha() %>', '<%= cita.getHora() %>', '<%= cita.getModalidad() %>')"
+                                                    style="background: rgba(255,255,255,0.25); border:none; color:white; padding:4px 8px; border-radius:8px; cursor:pointer;">
+                                                Reagendar
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -483,6 +492,7 @@
                         <div class="add-appointment-popup" id="popup">
                             <h3>Agregar Cita</h3>
                             <form action="../GuardarCitaServlet" method="POST" id="formCita">
+                                <input type="hidden" name="accion" value="crear">
                                 <label>Seleccionar Paciente:</label>
                                 <select name="id_usuario_paciente" required style="width:100%; padding:8px; border-radius:8px; margin-top:5px;">
                                     <option value="">-- Seleccione un paciente --</option>
@@ -516,11 +526,42 @@
                             </form>
                         </div>
                                     
+                        <!-- POPUP REAGENDAR -->
+                        <div class="add-appointment-popup" id="popup-reagendar">
+                            <h3>Reagendar Cita</h3>
+
+                            <form action="../GuardarCitaServlet" method="POST">
+                                <!-- 🔥 ESTO ES CLAVE -->
+                                <input type="hidden" name="accion" value="actualizar">
+                                <input type="hidden" name="id_cita" id="edit_id_cita">
+
+                                <label>Fecha:</label>
+                                <input type="date" name="fecha_cita" id="edit_fecha" required>
+
+                                <label>Hora:</label>
+                                <input type="time" name="hora_cita" id="edit_hora" required>
+
+                                <label>Modalidad:</label>
+                                <div class="radio-group">
+                                    <label class="radio-option">
+                                        <input type="radio" name="modalidad" value="virtual"> Virtual
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="modalidad" value="presencial"> Presencial
+                                    </label>
+                                </div>
+
+                                <button type="submit" style="background:#4c6ef5; color:white;">Guardar cambios</button>
+                                <button type="button" class="cancel" onclick="cerrarReagendar()">Cancelar</button>
+                            </form>
+                        </div>
+                                    
+                                    
                         <div class="menu">
                             <div class="active">🏠<br>Home</div>
-                            <div>💬<br>Chat</div>
-                            <div>📊<br>Reportes</div>
-                            <div>👤<br>Perfil</div>
+                            <div onclick="location.href='chatPsicologo.jsp';">💬<br>Chat</div>
+                            <div onclick="location.href='reportes.jsp';">📊<br>Reportes</div>
+                            <div onclick="location.href='perfilPsicologo.jsp';">👤<br>Perfil</div>
                         </div>
                     </div>
                 </div>
@@ -597,6 +638,28 @@
 
             function cerrarPopup() {
                 document.getElementById('popup').style.display = 'none';
+            }
+            
+            // --- FUNCIONES PARA REAGENDAR ---
+            function abrirReagendar(id, fecha, hora, modalidad) {
+                // 1. Asignar los valores al formulario del popup de reagendar
+                // Asegúrate de tener los inputs con estos IDs en tu popup de reagendar
+                document.getElementById('edit_id_cita').value = id;
+                document.getElementById('edit_fecha').value = fecha;
+                document.getElementById('edit_hora').value = hora;
+
+                // 2. Marcar el radio button correspondiente
+                const radios = document.querySelectorAll('#popup-reagendar input[name="modalidad"]');
+                radios.forEach(r => {
+                    r.checked = (r.value === modalidad.toLowerCase());
+                });
+
+                // 3. Mostrar el popup de reagendar
+                document.getElementById('popup-reagendar').style.display = 'block';
+            }
+            
+            function cerrarReagendar() {
+                document.getElementById('popup-reagendar').style.display = 'none';
             }
 
             function guardarCita() {

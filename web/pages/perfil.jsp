@@ -121,7 +121,7 @@
         }
 
         // 2. Gráfica (SVG)
-        PreparedStatement psAnimo = con.prepareStatement("SELECT porcentaje FROM registroanimo WHERE id_usuario = ? ORDER BY fecha DESC LIMIT 8");
+        PreparedStatement psAnimo = con.prepareStatement("SELECT porcentaje FROM registroanimo WHERE id_usuario = ? ORDER BY fecha ASC");
         psAnimo.setInt(1, idUsuario);
         ResultSet rsAnimo = psAnimo.executeQuery();
         while(rsAnimo.next()){
