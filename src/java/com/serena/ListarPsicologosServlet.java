@@ -19,7 +19,7 @@ public class ListarPsicologosServlet extends HttpServlet {
     // IA Config (Obtenida desde variables de entorno)
     private static final String API_KEY = System.getenv("GEMINI_API_KEY");
     // Usa esta URL en tu código Java:
-    private static final String GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=";
+    private static final String GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
