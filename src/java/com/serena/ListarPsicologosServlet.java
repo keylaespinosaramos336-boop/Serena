@@ -30,8 +30,8 @@ public class ListarPsicologosServlet extends HttpServlet {
     private final String DB_PASS = System.getenv().getOrDefault("DB_PASS", "vYBluCJLeLEqOKtswQfDAzlRkyxRVAKF");
 
     // Configuración de Gemini desde variables de entorno
-    private static final String GEMINI_URL = 
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=";
+    // Cambia tu constante a esta:
+    private static final String GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=";
     private static final String FOTO_DEFAULT = "https://img.icons8.com/3d-sugary/100/generic-user.png";
 
     @Override
