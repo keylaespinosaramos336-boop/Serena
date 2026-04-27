@@ -2,7 +2,6 @@
 nbproject/private/
 build/
 dist/*
-!dist/Appserena.war
 target/
 .nb-gradle/
 
