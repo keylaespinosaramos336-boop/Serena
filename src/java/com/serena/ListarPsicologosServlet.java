@@ -24,14 +24,9 @@ import javax.servlet.http.HttpSession;
 @WebServlet(name = "ListarPsicologosServlet", urlPatterns = {"/ListarPsicologosServlet"})
 public class ListarPsicologosServlet extends HttpServlet {
 
-    private final String DB_URL = System.getenv().getOrDefault(
-        "DB_URL",
-        "jdbc:mysql://roundhouse.proxy.rlwy.net:45224/railway" +
-        "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC" +
-        "&useUnicode=true&characterEncoding=UTF-8"
-    );
-    private final String DB_USER = System.getenv().getOrDefault("DB_USER", "root");
-    private final String DB_PASS = System.getenv().getOrDefault("DB_PASS", "vYBluCJLeLEqOKtswQfDAzlRkyxRVAKF");
+    private final String URL = System.getenv().getOrDefault("DB_URL", "jdbc:mysql://roundhouse.proxy.rlwy.net:45224/railway?useSSL=false&serverTimezone=UTC");
+    private final String USER = System.getenv().getOrDefault("DB_USER", "root");
+    private final String PASS = System.getenv().getOrDefault("DB_PASS", "vYBluCJLeLEqOKtswQfDAzlRkyxRVAKF");
 
     // Configuración de Gemini desde variables de entorno
     private static final String GEMINI_URL = 
@@ -51,7 +46,8 @@ public class ListarPsicologosServlet extends HttpServlet {
         if (idLogueado != null) {
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver");
-                try (Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS)) {
+                // Cambia esta línea en tu doGet:
+                try (Connection con = DriverManager.getConnection(URL, USER, PASS)) {
 
                     String sqlPsico = "SELECT u.id_usuario, u.nombre, u.foto, p.cedula, p.especialidad, p.experiencia, p.modalidad " +
                                       "FROM usuario u INNER JOIN psicologo p ON u.id_usuario = p.id_usuario";
