@@ -68,34 +68,88 @@ public class ListarPsicologosServlet extends HttpServlet {
         String userMessage = request.getParameter("mensaje");
 
         if (API_KEY == null || API_KEY.isEmpty()) {
-            out.print("Error: Configuración de IA faltante en el servidor.");
+            out.print("Error: La variable GEMINI_API_KEY no está configurada en el servidor.");
             return;
         }
 
         try {
-            HttpURLConnection conn = (HttpURLConnection) new URL(GEMINI_URL + API_KEY).openConnection();
+            // Modelo actualizado a gemini-2.0-flash
+            String urlStr = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + API_KEY;
+            HttpURLConnection conn = (HttpURLConnection) new URL(urlStr).openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+            conn.setConnectTimeout(10000);
+            conn.setReadTimeout(15000);
             conn.setDoOutput(true);
 
-            String prompt = "Eres Serena, asistente de bienestar. Responde breve, empática, español, sin asteriscos ni markdown. Usuario dice: " + userMessage.replace("\"", "'");
+            // Escapar el mensaje del usuario correctamente
+            String mensajeSeguro = userMessage.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "");
+            String prompt = "Eres Serena, asistente de bienestar emocional. Responde de forma breve, empática y en español. No uses asteriscos ni markdown. El usuario dice: " + mensajeSeguro;
             String jsonBody = "{\"contents\":[{\"parts\":[{\"text\":\"" + prompt + "\"}]}]}";
 
-            try (OutputStream os = conn.getOutputStream()) { os.write(jsonBody.getBytes("utf-8")); }
+            try (OutputStream os = conn.getOutputStream()) {
+                os.write(jsonBody.getBytes("UTF-8"));
+            }
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
+            int statusCode = conn.getResponseCode();
+
+            // Leer respuesta correctamente según si fue exitosa o error
+            InputStream inputStream = (statusCode >= 200 && statusCode < 300)
+                    ? conn.getInputStream()
+                    : conn.getErrorStream();
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
             StringBuilder res = new StringBuilder();
             String line;
             while ((line = br.readLine()) != null) res.append(line);
-            
-            // Extracción simple de texto
-            String aiText = res.toString();
-            if(aiText.contains("\"text\": \"")) {
-                aiText = aiText.split("\"text\": \"")[1].split("\"")[0].replace("\\n", " ");
+            br.close();
+
+            String rawResponse = res.toString();
+
+            if (statusCode != 200) {
+                // Mostrar el error real de Gemini para poder diagnosticar
+                out.print("Error de IA (código " + statusCode + "): " + rawResponse);
+                return;
             }
+
+            // Extracción robusta del texto de la respuesta JSON de Gemini
+            // La respuesta tiene: candidates[0].content.parts[0].text
+            String aiText = "Lo siento, no pude procesar tu mensaje.";
+            String marker = "\"text\":\"";
+            int idx = rawResponse.indexOf(marker);
+            if (idx == -1) {
+                // Intentar con espacio después de los dos puntos
+                marker = "\"text\": \"";
+                idx = rawResponse.indexOf(marker);
+            }
+            if (idx != -1) {
+                int start = idx + marker.length();
+                // Buscar el cierre de la cadena, respetando escapes
+                StringBuilder extracted = new StringBuilder();
+                for (int i = start; i < rawResponse.length(); i++) {
+                    char c = rawResponse.charAt(i);
+                    if (c == '\\' && i + 1 < rawResponse.length()) {
+                        char next = rawResponse.charAt(i + 1);
+                        if (next == '"') { extracted.append('"'); i++; }
+                        else if (next == 'n') { extracted.append(' '); i++; }
+                        else if (next == '\\') { extracted.append('\\'); i++; }
+                        else { extracted.append(c); }
+                    } else if (c == '"') {
+                        break; // Fin del texto
+                    } else {
+                        extracted.append(c);
+                    }
+                }
+                if (extracted.length() > 0) {
+                    aiText = extracted.toString().trim();
+                }
+            }
+
             out.print(aiText);
+
         } catch (Exception e) {
-            out.print("Lo siento, estoy teniendo un problema técnico. ¿Podemos intentarlo de nuevo?");
+            e.printStackTrace();
+            out.print("Lo siento, tuve un problema técnico. ¿Podemos intentarlo de nuevo?");
         }
     }
 
